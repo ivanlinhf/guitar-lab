@@ -1,4 +1,5 @@
 import { getSongById } from '../../domain/library/index.ts'
+import { TabSvg } from '../../render/tabSvg/index.ts'
 import { ControlBar } from '../controls/index.ts'
 import './PracticeScreen.css'
 
@@ -30,7 +31,7 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
 
       <div className="practice-screen__score">
         {song ? (
-          <p className="practice-screen__score-placeholder">谱面区域</p>
+          <TabSvg song={song} />
         ) : (
           <p className="practice-screen__missing">未找到该曲目</p>
         )}
