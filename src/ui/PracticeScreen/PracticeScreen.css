@@ -64,10 +64,20 @@
 .practice-screen__score {
   flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
   padding: 16px;
   background: #fafafa;
+}
+
+/* Keep TabSvg at its layout pixel width so long scores scroll, not shrink. */
+.practice-screen__score-inner {
+  display: inline-block;
+  width: max-content;
+  min-width: 100%;
+  vertical-align: top;
 }
 
 .practice-screen__missing {

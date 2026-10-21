@@ -8,11 +8,12 @@ afterEach(() => {
 })
 
 describe('listSongs', () => {
-  it('returns id and title for both built-in fixtures', () => {
+  it('returns id and title for all built-in fixtures', () => {
     const list = listSongs()
     expect(list).toEqual([
       { id: 'open-strings', title: 'Open Strings' },
       { id: 'c-am-switch', title: 'C–Am Switch' },
+      { id: 'eight-bar-drill', title: 'Eight-Bar Drill' },
     ])
     expect(list).toHaveLength(songFixtures.length)
   })
