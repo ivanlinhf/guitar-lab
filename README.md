@@ -1,4 +1,17 @@
-# React + TypeScript + Vite
+# Guitar Lab
+
+Vite + React + TypeScript frontend, wrapped with **Tauri 2** for the desktop shell.
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Vite web app only |
+| `npm run build` | Typecheck + Vite production build |
+| `npm run tauri dev` | Desktop window loading the Vite UI |
+| `npm run tauri build` | Package the desktop app |
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
