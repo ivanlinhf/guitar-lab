@@ -1,2 +1,2 @@
-// Placeholder module — task 0.4 scaffold
-export {}
+export { LibraryScreen } from './LibraryScreen/index.ts'
+export type { LibraryScreenProps } from './LibraryScreen/index.ts'
