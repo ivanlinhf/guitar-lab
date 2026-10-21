@@ -7,3 +7,5 @@ export type {
   Measure,
   SongDocument,
 } from './types.ts';
+
+export { parseSongDocument } from './schema.ts';
