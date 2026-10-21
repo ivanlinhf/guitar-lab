@@ -2,7 +2,7 @@ import { listSongs } from '../../domain/library/index.ts'
 import './LibraryScreen.css'
 
 export type LibraryScreenProps = {
-  /** Called when the user starts practice for a song. Wired in task 1.2. */
+  /** Called when the user starts practice for a song. */
   onStartPractice?: (songId: string) => void
 }
 
