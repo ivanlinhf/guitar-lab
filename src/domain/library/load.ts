@@ -4,9 +4,7 @@ import type { SongDocument } from '../score/types.ts'
 
 export type SongListItem = { id: string; title: string }
 
-/**
- * Try to parse a raw fixture; on failure warn and return null (design-spec §4.4).
- */
+/** Try to parse a raw fixture; on failure warn and return null. */
 function tryParseSong(entry: unknown): SongDocument | null {
   try {
     return parseSongDocument(entry)

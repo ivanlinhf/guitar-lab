@@ -1,4 +1,4 @@
-/** Guitar Lab custom score JSON — formatVersion 1 (design-spec §4.2). */
+/** Guitar Lab custom score JSON — formatVersion 1. */
 
 export type GuitarString = 1 | 2 | 3 | 4 | 5 | 6;
 
