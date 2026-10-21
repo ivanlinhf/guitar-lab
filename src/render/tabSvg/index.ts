@@ -9,10 +9,13 @@ export {
   PADDING_RIGHT,
   PADDING_TOP,
   PADDING_BOTTOM,
+  CHORD_LABEL_Y,
+  CHORD_LABEL_X_INSET,
 } from './layout.ts'
 export type {
   TabLayout,
   LaidOutNote,
+  LaidOutChord,
   StringLine,
   BarLine,
 } from './layout.ts'

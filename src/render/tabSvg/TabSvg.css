@@ -21,6 +21,13 @@
   stroke-width: 2;
 }
 
+.tab-svg__chord {
+  fill: #222;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .tab-svg__fret {
   fill: #111;
   font-family: ui-monospace, 'Cascadia Code', 'Segoe UI Mono', monospace;

@@ -40,6 +40,18 @@ export function TabSvg({ song }: TabSvgProps) {
           y2={bar.y2}
         />
       ))}
+      {layout.chords.map((chord) => (
+        <text
+          key={`c${chord.measureIndex}-${chord.chord}`}
+          className="tab-svg__chord"
+          x={chord.x}
+          y={chord.y}
+          textAnchor="start"
+          dominantBaseline="central"
+        >
+          {chord.chord}
+        </text>
+      ))}
       {layout.notes.map((note, i) => (
         <text
           key={`n${note.measureIndex}-${note.beat}-${note.string}-${i}`}

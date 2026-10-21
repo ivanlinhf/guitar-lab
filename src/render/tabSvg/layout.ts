@@ -18,11 +18,24 @@ export const PADDING_TOP = 28
 /** Bottom inset below string 6. */
 export const PADDING_BOTTOM = 28
 
+/** Vertical position for chord labels above the staff. */
+export const CHORD_LABEL_Y = 14
+
+/** Horizontal nudge past the opening bar so the label sits in the measure. */
+export const CHORD_LABEL_X_INSET = 6
+
 export type LaidOutNote = {
   measureIndex: number
   beat: number
   string: GuitarString
   fret: number
+  x: number
+  y: number
+}
+
+export type LaidOutChord = {
+  measureIndex: number
+  chord: string
   x: number
   y: number
 }
@@ -52,6 +65,7 @@ export type TabLayout = {
   strings: StringLine[]
   bars: BarLine[]
   notes: LaidOutNote[]
+  chords: LaidOutChord[]
 }
 
 /** Y of string 1 (high E) at top through string 6 at bottom. */
@@ -105,9 +119,18 @@ export function layoutTab(song: SongDocument): TabLayout {
   }
 
   const notes: LaidOutNote[] = []
+  const chords: LaidOutChord[] = []
   for (let i = 0; i < measureCount; i++) {
     const measure = song.measures[i]!
     const baseX = measureStartX(i, beatsPerMeasure)
+    if (measure.chord) {
+      chords.push({
+        measureIndex: measure.index,
+        chord: measure.chord,
+        x: baseX + CHORD_LABEL_X_INSET,
+        y: CHORD_LABEL_Y,
+      })
+    }
     for (const event of measure.events) {
       if (event.type !== 'note') continue
       notes.push({
@@ -129,5 +152,6 @@ export function layoutTab(song: SongDocument): TabLayout {
     strings,
     bars,
     notes,
+    chords,
   }
 }
