@@ -40,7 +40,8 @@ const timeSignatureSchema = z.object({
   denominator: z.number().finite().positive(),
 });
 
-const songDocumentSchema = z
+/** Compile-time coupled to SongDocument — drift from types.ts fails tsc. */
+export const SongDocumentSchema: z.ZodType<SongDocument> = z
   .object({
     formatVersion: z.literal(1),
     id: z.string().min(1),
@@ -105,10 +106,10 @@ function formatIssue(issue: z.ZodIssue): string {
  * On failure, throws an Error whose message lists path/field details.
  */
 export function parseSongDocument(input: unknown): SongDocument {
-  const result = songDocumentSchema.safeParse(input);
+  const result = SongDocumentSchema.safeParse(input);
   if (!result.success) {
     const details = result.error.issues.map(formatIssue).join('; ');
     throw new Error(`Invalid SongDocument: ${details}`);
   }
-  return result.data as SongDocument;
+  return result.data;
 }
