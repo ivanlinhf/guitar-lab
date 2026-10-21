@@ -1,16 +1,36 @@
-/* Wireframe-level Practice placeholder. Full shell comes later. */
+/* Score-first Practice shell: thin top, tall scrollable score, fixed bottom. */
 
 .practice-screen {
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 24px 20px 40px;
+  height: 100svh;
+  min-height: 100svh;
+  max-width: none;
+  margin: 0;
+  padding: 0;
   text-align: left;
+  overflow: hidden;
+}
+
+.practice-screen__top {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ccc;
+  background: #fff;
 }
 
 .practice-screen__back {
-  margin: 0 0 16px;
+  flex: 0 0 auto;
+  margin: 0;
   padding: 6px 12px;
   border: 1px solid #333;
   background: #f0f0f0;
@@ -21,16 +41,50 @@
 }
 
 .practice-screen__title {
+  flex: 1 1 auto;
   margin: 0;
-  font-size: 28px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: 0;
   color: #111;
 }
 
+.practice-screen__bpm {
+  flex: 0 0 auto;
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.practice-screen__score {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 16px;
+  background: #fafafa;
+}
+
+.practice-screen__score-placeholder {
+  margin: 0;
+  /* Tall placeholder so the score pane is clearly scrollable. */
+  min-height: 120vh;
+  font-size: 16px;
+  color: #555;
+}
+
 .practice-screen__missing {
-  margin: 12px 0 0;
+  margin: 0;
   font-size: 14px;
   color: #555;
+}
+
+.practice-screen__bottom {
+  flex: 0 0 auto;
+  width: 100%;
 }
