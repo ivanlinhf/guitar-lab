@@ -1,2 +1,2 @@
-// Placeholder module — task 0.4 scaffold
+// Placeholder module
 export {}
