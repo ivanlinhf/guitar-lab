@@ -102,7 +102,7 @@ function formatIssue(issue: z.ZodIssue): string {
 }
 
 /**
- * Parse and validate unknown JSON into a SongDocument (design-spec §4.4).
+ * Parse and validate unknown JSON into a SongDocument.
  * On failure, throws an Error whose message lists path/field details.
  */
 export function parseSongDocument(input: unknown): SongDocument {
