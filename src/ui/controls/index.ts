@@ -1,2 +1,1 @@
-// Placeholder module
-export {}
+export { ControlBar } from './ControlBar.tsx'

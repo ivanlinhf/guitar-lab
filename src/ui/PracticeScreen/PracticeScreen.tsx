@@ -1,4 +1,5 @@
 import { getSongById } from '../../domain/library/index.ts'
+import { ControlBar } from '../controls/index.ts'
 import './PracticeScreen.css'
 
 export type PracticeScreenProps = {
@@ -8,20 +9,36 @@ export type PracticeScreenProps = {
 
 export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
   const song = getSongById(songId)
+  const title = song?.title ?? songId
+  const bpmLabel = song ? `BPM ${song.bpm}` : null
 
   return (
     <div className="practice-screen">
-      <button type="button" className="practice-screen__back" onClick={onBack}>
-        返回
-      </button>
-      {song ? (
-        <h1 className="practice-screen__title">{song.title}</h1>
-      ) : (
-        <>
-          <h1 className="practice-screen__title">{songId}</h1>
+      <header className="practice-screen__top">
+        <button
+          type="button"
+          className="practice-screen__back"
+          onClick={onBack}
+        >
+          返回
+        </button>
+        <h1 className="practice-screen__title">{title}</h1>
+        {bpmLabel ? (
+          <span className="practice-screen__bpm">{bpmLabel}</span>
+        ) : null}
+      </header>
+
+      <div className="practice-screen__score">
+        {song ? (
+          <p className="practice-screen__score-placeholder">谱面区域</p>
+        ) : (
           <p className="practice-screen__missing">未找到该曲目</p>
-        </>
-      )}
+        )}
+      </div>
+
+      <footer className="practice-screen__bottom">
+        <ControlBar />
+      </footer>
     </div>
   )
 }
