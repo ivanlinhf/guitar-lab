@@ -1,2 +1,9 @@
-// Placeholder module — task 0.4 scaffold
-export {}
+export type {
+  GuitarString,
+  TimeSignature,
+  NoteEvent,
+  RestEvent,
+  ScoreEvent,
+  Measure,
+  SongDocument,
+} from './types.ts';
