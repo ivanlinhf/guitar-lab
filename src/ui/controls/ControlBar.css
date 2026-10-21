@@ -22,6 +22,16 @@
   cursor: not-allowed;
 }
 
+.control-bar__item--active {
+  color: #222;
+  background: #e4e4e4;
+  cursor: pointer;
+}
+
+.control-bar__item--active:hover {
+  background: #ddd;
+}
+
 .control-bar__item:disabled {
   opacity: 0.85;
 }

@@ -1,7 +1,9 @@
+import { useMemo } from 'react'
 import { getSongById } from '../../domain/library/index.ts'
 import { TabSvg } from '../../render/tabSvg/index.ts'
 import { ControlBar } from '../controls/index.ts'
 import './PracticeScreen.css'
+import { usePracticePlayer } from './usePracticePlayer.ts'
 
 export type PracticeScreenProps = {
   songId: string
@@ -9,9 +11,10 @@ export type PracticeScreenProps = {
 }
 
 export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
-  const song = getSongById(songId)
+  const song = useMemo(() => getSongById(songId), [songId])
   const title = song?.title ?? songId
   const bpmLabel = song ? `BPM ${song.bpm}` : null
+  const { isPlaying, togglePlayPause } = usePracticePlayer(song)
 
   return (
     <div className="practice-screen">
@@ -40,7 +43,10 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
       </div>
 
       <footer className="practice-screen__bottom">
-        <ControlBar />
+        <ControlBar
+          isPlaying={isPlaying}
+          onPlayPause={song ? togglePlayPause : undefined}
+        />
       </footer>
     </div>
   )
