@@ -1,0 +1,36 @@
+/* Wireframe-level Practice placeholder. Full shell comes later. */
+
+.practice-screen {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  text-align: left;
+}
+
+.practice-screen__back {
+  margin: 0 0 16px;
+  padding: 6px 12px;
+  border: 1px solid #333;
+  background: #f0f0f0;
+  font: inherit;
+  font-size: 14px;
+  color: #111;
+  cursor: pointer;
+}
+
+.practice-screen__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0;
+  color: #111;
+}
+
+.practice-screen__missing {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: #555;
+}
