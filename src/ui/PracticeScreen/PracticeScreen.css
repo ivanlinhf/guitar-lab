@@ -70,14 +70,6 @@
   background: #fafafa;
 }
 
-.practice-screen__score-placeholder {
-  margin: 0;
-  /* Tall placeholder so the score pane is clearly scrollable. */
-  min-height: 120vh;
-  font-size: 16px;
-  color: #555;
-}
-
 .practice-screen__missing {
   margin: 0;
   font-size: 14px;

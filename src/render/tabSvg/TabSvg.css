@@ -1,0 +1,33 @@
+.tab-svg {
+  display: block;
+  max-width: none;
+  overflow: visible;
+  background: transparent;
+}
+
+.tab-svg__string {
+  stroke: #333;
+  stroke-width: 1;
+  fill: none;
+}
+
+.tab-svg__bar {
+  stroke: #222;
+  stroke-width: 1.5;
+  fill: none;
+}
+
+.tab-svg__bar--close {
+  stroke-width: 2;
+}
+
+.tab-svg__fret {
+  fill: #111;
+  font-family: ui-monospace, 'Cascadia Code', 'Segoe UI Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  /* Punch a small gap in the string behind the digit. */
+  paint-order: stroke fill;
+  stroke: #fafafa;
+  stroke-width: 4px;
+}
