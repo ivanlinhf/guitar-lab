@@ -6,6 +6,7 @@ import {
   CHORD_LABEL_X_INSET,
   CHORD_LABEL_Y,
   PADDING_LEFT,
+  PADDING_RIGHT,
   layoutTab,
   stringY,
 } from './layout.ts'
@@ -133,6 +134,23 @@ describe('layoutTab', () => {
     ])
     expect(camLayout.chords[0]!.y).toBe(CHORD_LABEL_Y)
     expect(camLayout.chords[0]!.y).toBeLessThan(stringY(1))
+  })
+
+  it('lays out eight-bar-drill wider than a typical viewport', () => {
+    const song = getSongById('eight-bar-drill')
+    expect(song).not.toBeNull()
+    const layout = layoutTab(song!)
+
+    expect(layout.measureCount).toBe(8)
+    expect(layout.beatsPerMeasure).toBe(4)
+    expect(layout.width).toBe(
+      PADDING_LEFT + 8 * 4 * BEAT_WIDTH + PADDING_RIGHT,
+    )
+    expect(layout.width).toBeGreaterThan(800)
+    expect(layout.bars).toHaveLength(9)
+    expect(layout.strings).toHaveLength(6)
+    expect(layout.chords).toHaveLength(8)
+    expect(layout.notes.length).toBeGreaterThan(20)
   })
 
   it('omits chord labels when measures have no chord', () => {

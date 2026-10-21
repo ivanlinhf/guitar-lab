@@ -1,0 +1,91 @@
+{
+  "formatVersion": 1,
+  "id": "eight-bar-drill",
+  "title": "Eight-Bar Drill",
+  "description": "Longer open-string drill for horizontal score scrolling",
+  "tuning": ["E4", "B3", "G3", "D3", "A2", "E2"],
+  "bpm": 80,
+  "timeSignature": { "numerator": 4, "denominator": 4 },
+  "measures": [
+    {
+      "index": 1,
+      "chord": "Em",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 6, "fret": 0 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 5, "fret": 0 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 4, "fret": 0 },
+        { "type": "note", "beat": 3, "durationBeats": 1, "string": 3, "fret": 0 }
+      ]
+    },
+    {
+      "index": 2,
+      "chord": "Em",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 2, "fret": 0 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 1, "fret": 0 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 2, "fret": 0 },
+        { "type": "note", "beat": 3, "durationBeats": 1, "string": 3, "fret": 0 }
+      ]
+    },
+    {
+      "index": 3,
+      "chord": "G",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 6, "fret": 3 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 5, "fret": 2 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 4, "fret": 0 },
+        { "type": "note", "beat": 3, "durationBeats": 1, "string": 3, "fret": 0 }
+      ]
+    },
+    {
+      "index": 4,
+      "chord": "G",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 2, "fret": 0 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 1, "fret": 3 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 2, "fret": 0 },
+        { "type": "note", "beat": 3, "durationBeats": 1, "string": 3, "fret": 0 }
+      ]
+    },
+    {
+      "index": 5,
+      "chord": "C",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 5, "fret": 3 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 4, "fret": 2 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 3, "fret": 0 },
+        { "type": "note", "beat": 3, "durationBeats": 1, "string": 2, "fret": 1 }
+      ]
+    },
+    {
+      "index": 6,
+      "chord": "C",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 5, "fret": 3 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 4, "fret": 2 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 3, "fret": 0 },
+        { "type": "rest", "beat": 3, "durationBeats": 1 }
+      ]
+    },
+    {
+      "index": 7,
+      "chord": "Am",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 5, "fret": 0 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 4, "fret": 2 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 3, "fret": 2 },
+        { "type": "note", "beat": 3, "durationBeats": 1, "string": 2, "fret": 1 }
+      ]
+    },
+    {
+      "index": 8,
+      "chord": "Am",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 5, "fret": 0 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 4, "fret": 2 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 3, "fret": 2 },
+        { "type": "rest", "beat": 3, "durationBeats": 1 }
+      ]
+    }
+  ]
+}

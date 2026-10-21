@@ -31,7 +31,9 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
 
       <div className="practice-screen__score">
         {song ? (
-          <TabSvg song={song} />
+          <div className="practice-screen__score-inner">
+            <TabSvg song={song} />
+          </div>
         ) : (
           <p className="practice-screen__missing">未找到该曲目</p>
         )}

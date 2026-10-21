@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import cAmSwitchJson from '../../songs/c-am-switch.json'
+import eightBarDrillJson from '../../songs/eight-bar-drill.json'
 import openStringsJson from '../../songs/open-strings.json'
 import { parseSongDocument } from './schema.ts'
 import type { SongDocument } from './types.ts'
@@ -19,6 +20,13 @@ describe('parseSongDocument', () => {
     const doc = parseSongDocument(cAmSwitchJson)
     expect(doc.id).toBe('c-am-switch')
     expect(doc.formatVersion).toBe(1)
+  })
+
+  it('accepts eight-bar-drill fixture', () => {
+    const doc = parseSongDocument(eightBarDrillJson)
+    expect(doc.id).toBe('eight-bar-drill')
+    expect(doc.formatVersion).toBe(1)
+    expect(doc.measures).toHaveLength(8)
   })
 
   it('rejects wrong formatVersion', () => {
