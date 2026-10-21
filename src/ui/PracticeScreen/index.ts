@@ -1,2 +1,2 @@
-// Placeholder module — task 0.4 scaffold
-export {}
+export { PracticeScreen } from './PracticeScreen.tsx'
+export type { PracticeScreenProps } from './PracticeScreen.tsx'
