@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { getSongById } from '../../domain/library/index.ts'
+import type { SongDocument } from '../../domain/score/types.ts'
 import {
   BEAT_WIDTH,
+  CHORD_LABEL_X_INSET,
+  CHORD_LABEL_Y,
   PADDING_LEFT,
   layoutTab,
   stringY,
@@ -101,5 +104,73 @@ describe('layoutTab', () => {
     expect(secondMeasureNote.x).toBe(
       PADDING_LEFT + 1 * layout.beatsPerMeasure * BEAT_WIDTH,
     )
+  })
+
+  it('includes chord labels above measures that declare chord', () => {
+    const open = getSongById('open-strings')!
+    const openLayout = layoutTab(open)
+    expect(openLayout.chords).toEqual([
+      {
+        measureIndex: 1,
+        chord: 'Em',
+        x: PADDING_LEFT + CHORD_LABEL_X_INSET,
+        y: CHORD_LABEL_Y,
+      },
+      {
+        measureIndex: 2,
+        chord: 'Em',
+        x: PADDING_LEFT + 1 * openLayout.beatsPerMeasure * BEAT_WIDTH +
+          CHORD_LABEL_X_INSET,
+        y: CHORD_LABEL_Y,
+      },
+    ])
+
+    const cam = getSongById('c-am-switch')!
+    const camLayout = layoutTab(cam)
+    expect(camLayout.chords).toEqual([
+      expect.objectContaining({ measureIndex: 1, chord: 'C' }),
+      expect.objectContaining({ measureIndex: 2, chord: 'Am' }),
+    ])
+    expect(camLayout.chords[0]!.y).toBe(CHORD_LABEL_Y)
+    expect(camLayout.chords[0]!.y).toBeLessThan(stringY(1))
+  })
+
+  it('omits chord labels when measures have no chord', () => {
+    const song: SongDocument = {
+      formatVersion: 1,
+      id: 'no-chords',
+      title: 'No Chords',
+      tuning: ['E4', 'B3', 'G3', 'D3', 'A2', 'E2'],
+      bpm: 80,
+      timeSignature: { numerator: 4, denominator: 4 },
+      measures: [
+        {
+          index: 1,
+          events: [
+            {
+              type: 'note',
+              beat: 0,
+              durationBeats: 4,
+              string: 6,
+              fret: 0,
+            },
+          ],
+        },
+        {
+          index: 2,
+          events: [
+            {
+              type: 'rest',
+              beat: 0,
+              durationBeats: 4,
+            },
+          ],
+        },
+      ],
+    }
+
+    const layout = layoutTab(song)
+    expect(layout.measureCount).toBe(2)
+    expect(layout.chords).toEqual([])
   })
 })

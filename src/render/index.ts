@@ -8,11 +8,14 @@ export {
   PADDING_RIGHT,
   PADDING_TOP,
   PADDING_BOTTOM,
+  CHORD_LABEL_Y,
+  CHORD_LABEL_X_INSET,
 } from './tabSvg/index.ts'
 export type {
   TabSvgProps,
   TabLayout,
   LaidOutNote,
+  LaidOutChord,
   StringLine,
   BarLine,
 } from './tabSvg/index.ts'
