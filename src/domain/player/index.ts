@@ -1,7 +1,11 @@
-export type { Player } from './player.ts'
+export type { Player, ScheduledEvent, ScheduleListener } from './player.ts'
 export {
+  buildTimeline,
   createPlayer,
   getPlayhead,
+  onSchedule,
+  pause,
+  play,
   playheadSeconds,
   setPlayhead,
   setTempoRatio,
