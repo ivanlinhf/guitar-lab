@@ -1,0 +1,39 @@
+.ab-loop-controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: 13px;
+  color: #222;
+}
+
+.ab-loop-controls--disabled {
+  color: #555;
+  opacity: 0.85;
+}
+
+.ab-loop-controls__range {
+  flex: 0 0 auto;
+  margin-left: 2px;
+  min-width: 5.5em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: #333;
+}
+
+.ab-loop-controls--disabled .ab-loop-controls__range {
+  color: #555;
+}
+
+.ab-loop-controls__range--feedback {
+  color: #8a1f1f;
+  font-size: 12px;
+}
+
+.ab-loop-controls button[aria-pressed='true'] {
+  background: #d0d8e8;
+  border-color: #667;
+  color: #111;
+}

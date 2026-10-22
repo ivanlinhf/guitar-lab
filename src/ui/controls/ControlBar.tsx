@@ -1,4 +1,5 @@
 import './ControlBar.css'
+import { AbLoopControls } from './AbLoopControls.tsx'
 import { TempoSlider } from './TempoSlider.tsx'
 
 export type ControlBarProps = {
@@ -10,14 +11,31 @@ export type ControlBarProps = {
   tempoRatio?: number
   /** Called when the速度 slider changes; when omitted the slider stays disabled. */
   onTempoRatioChange?: (tempoRatio: number) => void
+  /** Inclusive loop start measure (1-based). */
+  loopA?: number
+  /** Inclusive loop end measure (1-based). */
+  loopB?: number
+  loopEnabled?: boolean
+  onSetLoopA?: () => void
+  onSetLoopB?: () => void
+  onLoopEnabledChange?: (enabled: boolean) => void
+  /** Brief message when set A/B is rejected. */
+  loopFeedback?: string | null
 }
 
-/** Fixed practice bottom bar — play/pause and tempo are live; others are placeholders. */
+/** Fixed practice bottom bar — play/pause, tempo, and A–B are live; others are placeholders. */
 export function ControlBar({
   isPlaying = false,
   onPlayPause,
   tempoRatio = 1,
   onTempoRatioChange,
+  loopA = 1,
+  loopB = 1,
+  loopEnabled = false,
+  onSetLoopA,
+  onSetLoopB,
+  onLoopEnabledChange,
+  loopFeedback = null,
 }: ControlBarProps) {
   const playEnabled = onPlayPause !== undefined
 
@@ -40,9 +58,15 @@ export function ControlBar({
         tempoRatio={tempoRatio}
         onTempoRatioChange={onTempoRatioChange}
       />
-      <button type="button" className="control-bar__item" disabled>
-        A–B
-      </button>
+      <AbLoopControls
+        loopA={loopA}
+        loopB={loopB}
+        loopEnabled={loopEnabled}
+        onSetLoopA={onSetLoopA}
+        onSetLoopB={onSetLoopB}
+        onLoopEnabledChange={onLoopEnabledChange}
+        feedback={loopFeedback}
+      />
       <button type="button" className="control-bar__item" disabled>
         节拍器
       </button>
