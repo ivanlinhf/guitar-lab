@@ -163,7 +163,7 @@ describe('player metronome', () => {
     expect(clicks).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8])
   })
 
-  it('on A–B wrap, does not click the exclusive end beat then re-clicks loop start', () => {
+  it('on A–B wrap with overshoot, skips endB and clicks loop-start downbeat', () => {
     const player = createPlayer(song)
     setLoopA(player, 1)
     setLoopB(player, 1)
@@ -174,13 +174,39 @@ describe('player metronome', () => {
     onMetronome(player, (b) => clicks.push(b))
 
     const endB = measureEndBeat(song, 1) // 4
+    const startA = 0
     setPlayhead(player, endB - 0.5)
     tick(player, secondsForBeats(0.7))
-    // Crosses 4 → wraps to ~0.2; exclusive end skips beat 4; lands past 0 so no 0 click.
+    // Crosses 4 → wraps to ~0.2; exclusive end skips 4; still fires startA.
     expect(clicks.includes(4)).toBe(false)
     expect(player.playheadBeat).toBeCloseTo(0.2, 10)
+    expect(clicks).toContain(startA)
 
     tick(player, secondsForBeats(0.9))
     expect(clicks).toContain(1)
+  })
+
+  it('on continuous A–B play with overshoot, every wrap includes the loop-start downbeat', () => {
+    const player = createPlayer(song)
+    setLoopA(player, 1)
+    setLoopB(player, 1)
+    setLoopEnabled(player, true)
+    setMetronomeEnabled(player, true)
+    play(player)
+    const clicks: number[] = []
+    onMetronome(player, (b) => clicks.push(b))
+
+    // ~0.3-beat steps (typical overshoot past measure end).
+    for (let i = 0; i < 40; i += 1) {
+      tick(player, secondsForBeats(0.3))
+    }
+
+    expect(clicks.includes(4)).toBe(false)
+    const zeros = clicks.filter((b) => b === 0)
+    const ones = clicks.filter((b) => b === 1)
+    // Steady state after the initial start: each wrap must click 0, not only 1–3.
+    expect(zeros.length).toBeGreaterThan(1)
+    expect(ones.length).toBeGreaterThan(1)
+    expect(zeros.length).toBeGreaterThanOrEqual(ones.length - 1)
   })
 })

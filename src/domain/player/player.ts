@@ -282,6 +282,9 @@ export function tick(player: Player, deltaSeconds: number): Player {
         loopLen > 0 ? startA + (overflow % loopLen) : startA
       setPlayhead(player, wrapped)
       dispatchUpTo(player, player.playheadBeat)
+      // setPlayhead synced nextBeat from the overshot playhead; realign from
+      // startA so the loop-start downbeat still clicks under rAF overflow.
+      syncMetronomePlayhead(player.metronome, startA)
       advanceMetronomeTo(player.metronome, player.playheadBeat)
       return player
     }
