@@ -14,7 +14,7 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
   const song = useMemo(() => getSongById(songId), [songId])
   const title = song?.title ?? songId
   const bpmLabel = song ? `BPM ${song.bpm}` : null
-  const { isPlaying, togglePlayPause } = usePracticePlayer(song)
+  const { isPlaying, playheadBeat, togglePlayPause } = usePracticePlayer(song)
 
   return (
     <div className="practice-screen">
@@ -35,7 +35,7 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
       <div className="practice-screen__score">
         {song ? (
           <div className="practice-screen__score-inner">
-            <TabSvg song={song} />
+            <TabSvg song={song} playheadBeat={playheadBeat} />
           </div>
         ) : (
           <p className="practice-screen__missing">未找到该曲目</p>

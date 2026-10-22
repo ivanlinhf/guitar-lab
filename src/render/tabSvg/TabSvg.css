@@ -41,3 +41,22 @@
   stroke: #fafafa;
   stroke-width: 4px;
 }
+
+.tab-svg__fret-bg {
+  fill: #1a6b4a;
+  opacity: 0.9;
+}
+
+.tab-svg__fret--active {
+  fill: #fff;
+  stroke: #1a6b4a;
+  stroke-width: 3px;
+}
+
+.tab-svg__playhead {
+  stroke: #1a6b4a;
+  stroke-width: 1.5;
+  stroke-opacity: 0.55;
+  fill: none;
+  pointer-events: none;
+}

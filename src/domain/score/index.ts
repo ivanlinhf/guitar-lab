@@ -18,3 +18,6 @@ export {
   secondsToBeat,
   songLengthBeats,
 } from './time.ts'
+
+export type { NoteAtPlayhead } from './notesAtPlayhead.ts'
+export { notesAtPlayhead } from './notesAtPlayhead.ts'
