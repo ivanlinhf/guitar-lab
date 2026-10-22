@@ -17,6 +17,7 @@
 .ab-loop-controls__range {
   flex: 0 0 auto;
   margin-left: 2px;
+  min-width: 5.5em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   color: #333;
@@ -26,12 +27,7 @@
   color: #555;
 }
 
-.ab-loop-controls__feedback {
-  flex: 0 0 auto;
-  max-width: 10em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.ab-loop-controls__range--feedback {
   color: #8a1f1f;
   font-size: 12px;
 }

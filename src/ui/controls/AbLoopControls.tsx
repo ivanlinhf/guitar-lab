@@ -75,15 +75,18 @@ export function AbLoopControls({
       >
         A–B 循环
       </button>
-      <span className="ab-loop-controls__range" aria-live="polite">
-        A{loopA}–B{loopB}
-        {loopEnabled ? ' · 开' : ' · 关'}
+      <span
+        className={
+          feedback
+            ? 'ab-loop-controls__range ab-loop-controls__range--feedback'
+            : 'ab-loop-controls__range'
+        }
+        role={feedback ? 'status' : undefined}
+        aria-live="polite"
+      >
+        {feedback ??
+          `A${loopA}–B${loopB}${loopEnabled ? ' · 开' : ' · 关'}`}
       </span>
-      {feedback ? (
-        <span className="ab-loop-controls__feedback" role="status" aria-live="polite">
-          {feedback}
-        </span>
-      ) : null}
     </div>
   )
 }
