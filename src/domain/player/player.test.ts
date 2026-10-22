@@ -15,10 +15,15 @@ import {
   getEffectiveBpm,
   getPlayhead,
   getTempoRatio,
+  lastMeasureIndex,
+  measureEndBeat,
   onSchedule,
   pause,
   play,
   playheadSeconds,
+  setLoopA,
+  setLoopB,
+  setLoopEnabled,
   setPlayhead,
   setTempoRatio,
   tick,
@@ -33,6 +38,9 @@ describe('createPlayer', () => {
     expect(getPlayhead(player)).toBe(0)
     expect(player.tempoRatio).toBe(1)
     expect(player.isPlaying).toBe(false)
+    expect(player.loopEnabled).toBe(false)
+    expect(player.loopA).toBe(1)
+    expect(player.loopB).toBe(lastMeasureIndex(song))
     expect(player.song).toBe(song)
   })
 })
@@ -302,5 +310,130 @@ describe('onSchedule', () => {
     unsubscribe()
     tick(player, 1)
     expect(listener).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('A–B loop setters', () => {
+  it('setLoopEnabled toggles loopEnabled', () => {
+    const player = createPlayer(song)
+    setLoopEnabled(player, true)
+    expect(player.loopEnabled).toBe(true)
+    setLoopEnabled(player, false)
+    expect(player.loopEnabled).toBe(false)
+  })
+
+  it('setLoopA / setLoopB accept a valid range', () => {
+    const player = createPlayer(song)
+    setLoopA(player, 1)
+    setLoopB(player, 2)
+    expect(player.loopA).toBe(1)
+    expect(player.loopB).toBe(2)
+  })
+
+  it('clamps measure indices below 1 and above last', () => {
+    const player = createPlayer(song)
+    const last = lastMeasureIndex(song)
+    setLoopA(player, 0)
+    expect(player.loopA).toBe(1)
+    setLoopB(player, last + 5)
+    expect(player.loopB).toBe(last)
+  })
+
+  it('rejects setLoopA when it would exceed loopB', () => {
+    const player = createPlayer(song)
+    setLoopA(player, 1)
+    setLoopB(player, 1)
+    setLoopA(player, 2)
+    expect(player.loopA).toBe(1)
+    expect(player.loopB).toBe(1)
+  })
+
+  it('rejects setLoopB when it would be less than loopA', () => {
+    const player = createPlayer(song)
+    setLoopA(player, 2)
+    setLoopB(player, 2)
+    setLoopB(player, 1)
+    expect(player.loopA).toBe(2)
+    expect(player.loopB).toBe(2)
+  })
+
+  it('allows A === B', () => {
+    const player = createPlayer(song)
+    setLoopA(player, 2)
+    setLoopB(player, 2)
+    expect(player.loopA).toBe(2)
+    expect(player.loopB).toBe(2)
+  })
+})
+
+describe('A–B loop tick', () => {
+  /** Seconds for `beats` at song BPM and tempoRatio 1. */
+  function secondsForBeats(beats: number): number {
+    return beatToSeconds(beats, song.bpm, 1)
+  }
+
+  it('when disabled, plays through the end of B without wrapping', () => {
+    const player = createPlayer(song)
+    setLoopA(player, 1)
+    setLoopB(player, 1)
+    setLoopEnabled(player, false)
+    setPlayhead(player, measureEndBeat(song, 1) - 0.5)
+    play(player)
+    tick(player, secondsForBeats(2))
+    expect(getPlayhead(player)).toBeCloseTo(measureEndBeat(song, 1) + 1.5)
+  })
+
+  it('when enabled, playhead past end of B jumps to start of A', () => {
+    const player = createPlayer(song)
+    setLoopA(player, 1)
+    setLoopB(player, 1)
+    setLoopEnabled(player, true)
+    setPlayhead(player, measureEndBeat(song, 1) - 0.25)
+    play(player)
+    // +0.5 beats → would reach endB + 0.25 → wrap to A + 0.25
+    tick(player, secondsForBeats(0.5))
+    expect(getPlayhead(player)).toBeCloseTo(absoluteBeat(song, 1, 0) + 0.25)
+  })
+
+  it('when A === B, wraps within that single measure', () => {
+    const player = createPlayer(song)
+    setLoopA(player, 2)
+    setLoopB(player, 2)
+    setLoopEnabled(player, true)
+    const startA = absoluteBeat(song, 2, 0)
+    const endB = measureEndBeat(song, 2)
+    setPlayhead(player, endB - 0.1)
+    play(player)
+    tick(player, secondsForBeats(0.3))
+    expect(getPlayhead(player)).toBeCloseTo(startA + 0.2)
+  })
+
+  it('when B is the last measure, wraps instead of clamping at song end', () => {
+    const player = createPlayer(song)
+    const last = lastMeasureIndex(song)
+    setLoopA(player, 1)
+    setLoopB(player, last)
+    setLoopEnabled(player, true)
+    setPlayhead(player, songLengthBeats(song) - 0.5)
+    play(player)
+    tick(player, secondsForBeats(1))
+    expect(getPlayhead(player)).toBeCloseTo(absoluteBeat(song, 1, 0) + 0.5)
+  })
+
+  it('re-fires schedule events after wrapping to A', () => {
+    const player = createPlayer(song)
+    setLoopA(player, 1)
+    setLoopB(player, 1)
+    setLoopEnabled(player, true)
+    const fired: number[] = []
+    onSchedule(player, (e) => {
+      fired.push(e.absoluteBeat)
+    })
+    setPlayhead(player, measureEndBeat(song, 1) - 0.5)
+    play(player)
+    // Cross end of B with enough overflow to land on beat 0 of A
+    tick(player, secondsForBeats(0.5))
+    expect(getPlayhead(player)).toBeCloseTo(0)
+    expect(fired).toContain(0)
   })
 })
