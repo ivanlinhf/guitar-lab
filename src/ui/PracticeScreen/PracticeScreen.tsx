@@ -1,10 +1,11 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { getSongById } from '../../domain/library/index.ts'
 import { TabSvg } from '../../render/tabSvg/index.ts'
 import {
   ControlBar,
   measureIndexFromPlayhead,
 } from '../controls/index.ts'
+import { BigFretPanel } from './BigFretPanel.tsx'
 import './PracticeScreen.css'
 import { usePracticePlayer } from './usePracticePlayer.ts'
 
@@ -39,6 +40,9 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
     togglePlayPause,
   } = usePracticePlayer(song)
 
+  /** Default off: TAB-only until the learner turns「大品格」on. */
+  const [bigFretEnabled, setBigFretEnabled] = useState(false)
+
   const currentMeasure = song
     ? measureIndexFromPlayhead(song, playheadBeat)
     : undefined
@@ -61,13 +65,18 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
       </header>
 
       <div className="practice-screen__score">
-        {song ? (
-          <div className="practice-screen__score-inner">
-            <TabSvg song={song} playheadBeat={playheadBeat} />
-          </div>
-        ) : (
-          <p className="practice-screen__missing">未找到该曲目</p>
-        )}
+        {bigFretEnabled && song ? (
+          <BigFretPanel song={song} playheadBeat={playheadBeat} />
+        ) : null}
+        <div className="practice-screen__score-scroll">
+          {song ? (
+            <div className="practice-screen__score-inner">
+              <TabSvg song={song} playheadBeat={playheadBeat} />
+            </div>
+          ) : (
+            <p className="practice-screen__missing">未找到该曲目</p>
+          )}
+        </div>
       </div>
 
       <footer className="practice-screen__bottom">
@@ -89,6 +98,8 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
           onCountInEnabledChange={song ? setCountInEnabled : undefined}
           guitarMuted={guitarMuted}
           onGuitarMutedChange={song ? setGuitarMuted : undefined}
+          bigFretEnabled={bigFretEnabled}
+          onBigFretEnabledChange={song ? setBigFretEnabled : undefined}
           currentMeasure={currentMeasure}
           measureTotal={measureTotal}
           onSeekToMeasure={song ? seekToMeasure : undefined}

@@ -2,6 +2,7 @@ import './ControlBar.css'
 import { AbLoopControls } from './AbLoopControls.tsx'
 import { controlBarCopy } from './copy.ts'
 import { MeasureProgress } from './MeasureProgress.tsx'
+import { BigFretToggle } from './BigFretToggle.tsx'
 import { ClickOnlyToggle } from './ClickOnlyToggle.tsx'
 import { CountInToggle } from './CountInToggle.tsx'
 import { MetronomeToggle } from './MetronomeToggle.tsx'
@@ -38,6 +39,10 @@ export type ControlBarProps = {
   guitarMuted?: boolean
   /** Called when the仅节拍 toggle changes; when omitted the control stays disabled. */
   onGuitarMutedChange?: (muted: boolean) => void
+  /** Large string+fret novice panel on/off (default off). */
+  bigFretEnabled?: boolean
+  /** Called when the大品格 toggle changes; when omitted the control stays disabled. */
+  onBigFretEnabledChange?: (enabled: boolean) => void
   /** 1-based measure at the playhead; when set with measureTotal, shows progress. */
   currentMeasure?: number
   /** Total measures (`measures.length`); omit with currentMeasure for the placeholder. */
@@ -48,7 +53,7 @@ export type ControlBarProps = {
 
 /**
  * Fixed practice bottom bar, L→R:
- * 播放/暂停 → 速度 → A–B → 节拍器 → 预备拍 → 仅节拍 → 小节/scrub.
+ * 播放/暂停 → 速度 → A–B → 节拍器 → 预备拍 → 仅节拍 → 大品格 → 小节/scrub.
  */
 export function ControlBar({
   isPlaying = false,
@@ -68,6 +73,8 @@ export function ControlBar({
   onCountInEnabledChange,
   guitarMuted = false,
   onGuitarMutedChange,
+  bigFretEnabled = false,
+  onBigFretEnabledChange,
   currentMeasure,
   measureTotal,
   onSeekToMeasure,
@@ -115,6 +122,10 @@ export function ControlBar({
       <ClickOnlyToggle
         guitarMuted={guitarMuted}
         onGuitarMutedChange={onGuitarMutedChange}
+      />
+      <BigFretToggle
+        bigFretEnabled={bigFretEnabled}
+        onBigFretEnabledChange={onBigFretEnabledChange}
       />
       {showMeasureProgress ? (
         <MeasureProgress
