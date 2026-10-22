@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ensureAudio } from '../../audio/index.ts'
+import { ensureAudio, playClick } from '../../audio/index.ts'
 import {
   createPlayer,
   getPlayhead,
   lastMeasureIndex,
+  onMetronome,
   onSchedule,
   pause,
   play,
   setLoopA as applyLoopA,
   setLoopB as applyLoopB,
   setLoopEnabled as applyLoopEnabled,
+  setMetronomeEnabled as applyMetronomeEnabled,
   setTempoRatio as applyTempoRatio,
   tick,
   type Player,
@@ -38,6 +40,9 @@ export type UsePracticePlayerResult = {
   /** Set B to the measure under the playhead; returns false when rejected. */
   setLoopBToCurrentMeasure: () => boolean
   setLoopEnabled: (enabled: boolean) => void
+  /** Metronome on/off; click aligns to integer beats at effective BPM. */
+  metronomeEnabled: boolean
+  setMetronomeEnabled: (enabled: boolean) => void
   /** Short Chinese hint when set A/B is rejected (invalid order). */
   loopFeedback: string | null
   togglePlayPause: () => void
@@ -59,6 +64,7 @@ export function usePracticePlayer(
     song ? lastMeasureIndex(song) : 1,
   )
   const [loopEnabled, setLoopEnabledState] = useState(false)
+  const [metronomeEnabled, setMetronomeEnabledState] = useState(false)
   const [loopFeedback, setLoopFeedback] = useState<string | null>(null)
   const [loadedSongId, setLoadedSongId] = useState(songId)
   const rafIdRef = useRef<number | null>(null)
@@ -76,6 +82,7 @@ export function usePracticePlayer(
     setLoopAState(1)
     setLoopBState(song ? lastMeasureIndex(song) : 1)
     setLoopEnabledState(false)
+    setMetronomeEnabledState(false)
     setLoopFeedback(null)
   }
 
@@ -94,12 +101,16 @@ export function usePracticePlayer(
 
     const player = createPlayer(song)
     playerRef.current = player
-    const unsubscribe = onSchedule(player, (scheduled) => {
+    const unsubscribeSchedule = onSchedule(player, (scheduled) => {
       soundScheduledNote(scheduled, player.song.bpm, player.tempoRatio)
+    })
+    const unsubscribeMetronome = onMetronome(player, () => {
+      void playClick()
     })
 
     return () => {
-      unsubscribe()
+      unsubscribeSchedule()
+      unsubscribeMetronome()
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current)
         rafIdRef.current = null
@@ -223,6 +234,15 @@ export function usePracticePlayer(
     setLoopEnabledState(player.loopEnabled)
   }, [])
 
+  const setMetronomeEnabled = useCallback((enabled: boolean) => {
+    const player = playerRef.current
+    if (!player) {
+      return
+    }
+    applyMetronomeEnabled(player, enabled)
+    setMetronomeEnabledState(player.metronome.enabled)
+  }, [])
+
   const togglePlayPause = useCallback(() => {
     const player = playerRef.current
     if (!player) {
@@ -266,6 +286,8 @@ export function usePracticePlayer(
     setLoopAToCurrentMeasure,
     setLoopBToCurrentMeasure,
     setLoopEnabled,
+    metronomeEnabled,
+    setMetronomeEnabled,
     loopFeedback,
     togglePlayPause,
   }

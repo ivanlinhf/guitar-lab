@@ -1,4 +1,5 @@
 export type { Player, ScheduledEvent, ScheduleListener } from './player.ts'
+export type { MetronomeClickListener } from '../metronome/index.ts'
 export {
   TEMPO_RATIO_MAX,
   TEMPO_RATIO_MIN,
@@ -8,8 +9,10 @@ export {
   getEffectiveBpm,
   getPlayhead,
   getTempoRatio,
+  isMetronomeEnabled,
   lastMeasureIndex,
   measureEndBeat,
+  onMetronome,
   onSchedule,
   pause,
   play,
@@ -17,6 +20,7 @@ export {
   setLoopA,
   setLoopB,
   setLoopEnabled,
+  setMetronomeEnabled,
   setPlayhead,
   setTempoRatio,
   tick,
