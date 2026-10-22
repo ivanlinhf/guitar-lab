@@ -12,6 +12,7 @@ import {
   setLoopB as applyLoopB,
   setLoopEnabled as applyLoopEnabled,
   setCountInEnabled as applyCountInEnabled,
+  setGuitarMuted as applyGuitarMuted,
   setMetronomeEnabled as applyMetronomeEnabled,
   setPlayhead as applyPlayhead,
   setTempoRatio as applyTempoRatio,
@@ -49,6 +50,12 @@ export type UsePracticePlayerResult = {
   /** Count-in on/off; when on, play runs a one-measure prep before guitar. */
   countInEnabled: boolean
   setCountInEnabled: (enabled: boolean) => void
+  /**
+   * Click-only on/off; when on, guitar schedule is muted (metronome clicks
+   * still play if the metronome is enabled).
+   */
+  guitarMuted: boolean
+  setGuitarMuted: (muted: boolean) => void
   /** Short Chinese hint when set A/B is rejected (invalid order). */
   loopFeedback: string | null
   /** Seek playhead to the start of a 1-based measure (playing or paused). */
@@ -74,6 +81,7 @@ export function usePracticePlayer(
   const [loopEnabled, setLoopEnabledState] = useState(false)
   const [metronomeEnabled, setMetronomeEnabledState] = useState(false)
   const [countInEnabled, setCountInEnabledState] = useState(false)
+  const [guitarMuted, setGuitarMutedState] = useState(false)
   const [loopFeedback, setLoopFeedback] = useState<string | null>(null)
   const [loadedSongId, setLoadedSongId] = useState(songId)
   const rafIdRef = useRef<number | null>(null)
@@ -93,6 +101,7 @@ export function usePracticePlayer(
     setLoopEnabledState(false)
     setMetronomeEnabledState(false)
     setCountInEnabledState(false)
+    setGuitarMutedState(false)
     setLoopFeedback(null)
   }
 
@@ -262,6 +271,15 @@ export function usePracticePlayer(
     setCountInEnabledState(player.countInEnabled)
   }, [])
 
+  const setGuitarMuted = useCallback((muted: boolean) => {
+    const player = playerRef.current
+    if (!player) {
+      return
+    }
+    applyGuitarMuted(player, muted)
+    setGuitarMutedState(player.guitarMuted)
+  }, [])
+
   const seekToMeasure = useCallback((measureIndex: number) => {
     const player = playerRef.current
     if (!player) {
@@ -318,6 +336,8 @@ export function usePracticePlayer(
     setMetronomeEnabled,
     countInEnabled,
     setCountInEnabled,
+    guitarMuted,
+    setGuitarMuted,
     loopFeedback,
     seekToMeasure,
     togglePlayPause,
