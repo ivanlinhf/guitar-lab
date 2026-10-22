@@ -1,0 +1,18 @@
+.measure-progress {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid #999;
+  background: #eee;
+  font: inherit;
+  font-size: 13px;
+  color: #222;
+  white-space: nowrap;
+}
+
+.measure-progress__label {
+  flex: 0 0 auto;
+}

@@ -1,5 +1,6 @@
 import './ControlBar.css'
 import { AbLoopControls } from './AbLoopControls.tsx'
+import { MeasureProgress } from './MeasureProgress.tsx'
 import { MetronomeToggle } from './MetronomeToggle.tsx'
 import { TempoSlider } from './TempoSlider.tsx'
 
@@ -26,9 +27,13 @@ export type ControlBarProps = {
   metronomeEnabled?: boolean
   /** Called when the节拍器 toggle changes; when omitted the control stays disabled. */
   onMetronomeEnabledChange?: (enabled: boolean) => void
+  /** 1-based measure at the playhead; when set with measureTotal, shows progress. */
+  currentMeasure?: number
+  /** Total measures (`measures.length`); omit with currentMeasure for the placeholder. */
+  measureTotal?: number
 }
 
-/** Fixed practice bottom bar — play/pause, tempo, A–B, and metronome are live. */
+/** Fixed practice bottom bar — play/pause, tempo, A–B, metronome, and measure progress. */
 export function ControlBar({
   isPlaying = false,
   onPlayPause,
@@ -43,8 +48,12 @@ export function ControlBar({
   loopFeedback = null,
   metronomeEnabled = false,
   onMetronomeEnabledChange,
+  currentMeasure,
+  measureTotal,
 }: ControlBarProps) {
   const playEnabled = onPlayPause !== undefined
+  const showMeasureProgress =
+    currentMeasure !== undefined && measureTotal !== undefined
 
   return (
     <div className="control-bar" role="toolbar" aria-label="练习控件">
@@ -78,9 +87,16 @@ export function ControlBar({
         metronomeEnabled={metronomeEnabled}
         onMetronomeEnabledChange={onMetronomeEnabledChange}
       />
-      <button type="button" className="control-bar__item" disabled>
-        小节
-      </button>
+      {showMeasureProgress ? (
+        <MeasureProgress
+          currentMeasure={currentMeasure}
+          totalMeasures={measureTotal}
+        />
+      ) : (
+        <button type="button" className="control-bar__item" disabled>
+          小节
+        </button>
+      )}
     </div>
   )
 }
