@@ -21,3 +21,6 @@ export {
 
 export type { NoteAtPlayhead } from './notesAtPlayhead.ts'
 export { notesAtPlayhead } from './notesAtPlayhead.ts'
+
+export type { BigFretDisplay, BigFretFinger } from './bigFretDisplay.ts'
+export { bigFretDisplay, nextNotesAfterPlayhead } from './bigFretDisplay.ts'

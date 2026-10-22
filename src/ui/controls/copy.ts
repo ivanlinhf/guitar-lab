@@ -13,6 +13,7 @@ export const controlBarCopy = {
   metronome: '节拍器',
   countIn: '预备拍',
   clickOnly: '仅节拍',
+  bigFret: '大品格',
   on: '开',
   off: '关',
   /** Placeholder when measure progress is not yet available. */
