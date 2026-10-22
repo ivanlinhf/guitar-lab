@@ -10,6 +10,7 @@ describe('controlBarCopy', () => {
     expect(controlBarCopy.setA).toBe('设为 A')
     expect(controlBarCopy.setB).toBe('设为 B')
     expect(controlBarCopy.metronome).toBe('节拍器')
+    expect(controlBarCopy.countIn).toBe('预备拍')
     expect(controlBarCopy.on).toBe('开')
     expect(controlBarCopy.off).toBe('关')
     expect(controlBarCopy.measureProgress(3, 8)).toBe('小节 3 / 8')

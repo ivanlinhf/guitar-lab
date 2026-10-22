@@ -222,6 +222,26 @@ describe('count-in', () => {
     expect(fired).toEqual([0])
   })
 
+  it('disabling mid-count-in clears remaining beats so guitar can resume', () => {
+    const player = createPlayer(song)
+    setCountInEnabled(player, true)
+    const fired: number[] = []
+    onSchedule(player, (e) => {
+      fired.push(e.absoluteBeat)
+    })
+    play(player)
+    tick(player, secondsForBeats(1.5))
+    expect(isCountingIn(player)).toBe(true)
+
+    setCountInEnabled(player, false)
+    expect(isCountingIn(player)).toBe(false)
+    expect(player.countInRemainingBeats).toBe(0)
+    expect(fired).toEqual([])
+
+    tick(player, secondsForBeats(0.5))
+    expect(fired).toEqual([0])
+  })
+
   it('after count-in, metronome (when enabled) continues from the song playhead', () => {
     const player = createPlayer(song)
     setCountInEnabled(player, true)
