@@ -1,4 +1,5 @@
 import './AbLoopControls.css'
+import { controlBarCopy } from './copy.ts'
 
 export type AbLoopControlsProps = {
   /** Inclusive loop start measure (1-based). */
@@ -17,7 +18,7 @@ export type AbLoopControlsProps = {
   feedback?: string | null
 }
 
-/** Bottom-bar A–B controls: set A/B from current measure, loop toggle, range display. */
+/** Bottom-bar A–B controls: loop toggle, set A/B from current measure, range display. */
 export function AbLoopControls({
   loopA,
   loopB,
@@ -29,6 +30,9 @@ export function AbLoopControls({
 }: AbLoopControlsProps) {
   const enabled = onSetLoopA !== undefined && onSetLoopB !== undefined &&
     onLoopEnabledChange !== undefined
+  const itemClass = enabled
+    ? 'control-bar__item control-bar__item--active'
+    : 'control-bar__item'
 
   return (
     <div
@@ -36,44 +40,32 @@ export function AbLoopControls({
         enabled ? 'ab-loop-controls' : 'ab-loop-controls ab-loop-controls--disabled'
       }
       role="group"
-      aria-label="A–B 循环"
+      aria-label={controlBarCopy.abLoop}
     >
       <button
         type="button"
-        className={
-          enabled
-            ? 'control-bar__item control-bar__item--active'
-            : 'control-bar__item'
-        }
-        disabled={!enabled}
-        onClick={onSetLoopA}
-      >
-        设为 A
-      </button>
-      <button
-        type="button"
-        className={
-          enabled
-            ? 'control-bar__item control-bar__item--active'
-            : 'control-bar__item'
-        }
-        disabled={!enabled}
-        onClick={onSetLoopB}
-      >
-        设为 B
-      </button>
-      <button
-        type="button"
-        className={
-          enabled
-            ? 'control-bar__item control-bar__item--active'
-            : 'control-bar__item'
-        }
+        className={itemClass}
         disabled={!enabled}
         aria-pressed={enabled ? loopEnabled : undefined}
         onClick={() => onLoopEnabledChange?.(!loopEnabled)}
       >
-        A–B 循环
+        {controlBarCopy.abLoop}
+      </button>
+      <button
+        type="button"
+        className={itemClass}
+        disabled={!enabled}
+        onClick={onSetLoopA}
+      >
+        {controlBarCopy.setA}
+      </button>
+      <button
+        type="button"
+        className={itemClass}
+        disabled={!enabled}
+        onClick={onSetLoopB}
+      >
+        {controlBarCopy.setB}
       </button>
       <span
         className={
@@ -85,7 +77,7 @@ export function AbLoopControls({
         aria-live="polite"
       >
         {feedback ??
-          `A${loopA}–B${loopB}${loopEnabled ? ' · 开' : ' · 关'}`}
+          `A${loopA}–B${loopB}${loopEnabled ? ` · ${controlBarCopy.on}` : ` · ${controlBarCopy.off}`}`}
       </span>
     </div>
   )

@@ -1,4 +1,5 @@
 import './TempoSlider.css'
+import { controlBarCopy } from './copy.ts'
 import {
   TEMPO_PERCENT_MAX,
   TEMPO_PERCENT_MIN,
@@ -13,7 +14,7 @@ export type TempoSliderProps = {
   onTempoRatioChange?: (tempoRatio: number) => void
 }
 
-/** Bottom-bar「速度」control: label, range input, and current percent. */
+/** Bottom-bar「速度」control: label, range input (50%–100%), and current percent. */
 export function TempoSlider({
   tempoRatio,
   onTempoRatioChange,
@@ -30,7 +31,7 @@ export function TempoSlider({
       }
     >
       <label className="tempo-slider__label" htmlFor="practice-tempo">
-        速度
+        {controlBarCopy.tempo}
       </label>
       <input
         id="practice-tempo"

@@ -1,5 +1,6 @@
 import './ControlBar.css'
 import { AbLoopControls } from './AbLoopControls.tsx'
+import { controlBarCopy } from './copy.ts'
 import { MeasureProgress } from './MeasureProgress.tsx'
 import { MetronomeToggle } from './MetronomeToggle.tsx'
 import { TempoSlider } from './TempoSlider.tsx'
@@ -35,7 +36,10 @@ export type ControlBarProps = {
   onSeekToMeasure?: (measureIndex: number) => void
 }
 
-/** Fixed practice bottom bar — play/pause, tempo, A–B, metronome, and measure scrub. */
+/**
+ * Fixed practice bottom bar, L→R:
+ * 播放/暂停 → 速度 → A–B → 节拍器 → 小节/scrub.
+ */
 export function ControlBar({
   isPlaying = false,
   onPlayPause,
@@ -59,7 +63,7 @@ export function ControlBar({
     currentMeasure !== undefined && measureTotal !== undefined
 
   return (
-    <div className="control-bar" role="toolbar" aria-label="练习控件">
+    <div className="control-bar" role="toolbar" aria-label={controlBarCopy.toolbarLabel}>
       <button
         type="button"
         className={
@@ -71,7 +75,7 @@ export function ControlBar({
         onClick={onPlayPause}
         aria-pressed={playEnabled ? isPlaying : undefined}
       >
-        {isPlaying ? '暂停' : '播放'}
+        {isPlaying ? controlBarCopy.pause : controlBarCopy.play}
       </button>
       <TempoSlider
         tempoRatio={tempoRatio}
@@ -98,7 +102,7 @@ export function ControlBar({
         />
       ) : (
         <button type="button" className="control-bar__item" disabled>
-          小节
+          {controlBarCopy.measure}
         </button>
       )}
     </div>
