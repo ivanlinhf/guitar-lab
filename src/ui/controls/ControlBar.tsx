@@ -31,9 +31,11 @@ export type ControlBarProps = {
   currentMeasure?: number
   /** Total measures (`measures.length`); omit with currentMeasure for the placeholder. */
   measureTotal?: number
+  /** Seek to a 1-based measure start; omit to keep the scrub disabled. */
+  onSeekToMeasure?: (measureIndex: number) => void
 }
 
-/** Fixed practice bottom bar — play/pause, tempo, A–B, metronome, and measure progress. */
+/** Fixed practice bottom bar — play/pause, tempo, A–B, metronome, and measure scrub. */
 export function ControlBar({
   isPlaying = false,
   onPlayPause,
@@ -50,6 +52,7 @@ export function ControlBar({
   onMetronomeEnabledChange,
   currentMeasure,
   measureTotal,
+  onSeekToMeasure,
 }: ControlBarProps) {
   const playEnabled = onPlayPause !== undefined
   const showMeasureProgress =
@@ -91,6 +94,7 @@ export function ControlBar({
         <MeasureProgress
           currentMeasure={currentMeasure}
           totalMeasures={measureTotal}
+          onSeekToMeasure={onSeekToMeasure}
         />
       ) : (
         <button type="button" className="control-bar__item" disabled>

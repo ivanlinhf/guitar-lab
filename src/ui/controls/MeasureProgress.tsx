@@ -5,23 +5,49 @@ export type MeasureProgressProps = {
   currentMeasure: number
   /** Total measures in the song (`measures.length`). */
   totalMeasures: number
+  /** Seek to a 1-based measure start; omit to keep the scrub disabled. */
+  onSeekToMeasure?: (measureIndex: number) => void
 }
 
-/** Bottom-bar read-only「小节 n / total」label (scrub comes later). */
+/** Bottom-bar「小节 n / total」label plus measure-step scrub. */
 export function MeasureProgress({
   currentMeasure,
   totalMeasures,
+  onSeekToMeasure,
 }: MeasureProgressProps) {
+  const disabled = onSeekToMeasure === undefined
+  const max = Math.max(1, totalMeasures)
+  const value = Math.min(Math.max(1, currentMeasure), max)
+
   return (
     <div
-      className="measure-progress"
-      role="status"
-      aria-label="小节进度"
-      aria-live="polite"
+      className={
+        disabled
+          ? 'measure-progress measure-progress--disabled'
+          : 'measure-progress'
+      }
     >
-      <span className="measure-progress__label">
-        小节 {currentMeasure} / {totalMeasures}
-      </span>
+      <label className="measure-progress__label" htmlFor="practice-measure-scrub">
+        小节 {value} / {max}
+      </label>
+      <input
+        id="practice-measure-scrub"
+        className="measure-progress__range"
+        type="range"
+        min={1}
+        max={max}
+        step={1}
+        value={value}
+        disabled={disabled}
+        aria-label="小节进度"
+        aria-valuemin={1}
+        aria-valuemax={max}
+        aria-valuenow={value}
+        aria-valuetext={`小节 ${value} / ${max}`}
+        onChange={(event) => {
+          onSeekToMeasure?.(Number(event.target.value))
+        }}
+      />
     </div>
   )
 }
