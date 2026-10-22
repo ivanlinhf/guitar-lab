@@ -12,6 +12,7 @@ import {
   setLoopB as applyLoopB,
   setLoopEnabled as applyLoopEnabled,
   setMetronomeEnabled as applyMetronomeEnabled,
+  setPlayhead as applyPlayhead,
   setTempoRatio as applyTempoRatio,
   tick,
   type Player,
@@ -19,6 +20,7 @@ import {
 import { songLengthBeats } from '../../domain/score/index.ts'
 import type { SongDocument } from '../../domain/score/types.ts'
 import { measureIndexFromPlayhead } from '../controls/measureIndexFromPlayhead.ts'
+import { measureStartBeat } from '../controls/measureStartBeat.ts'
 import { soundScheduledNote } from './practicePlayback.ts'
 
 const LOOP_FEEDBACK_MS = 4000
@@ -45,6 +47,8 @@ export type UsePracticePlayerResult = {
   setMetronomeEnabled: (enabled: boolean) => void
   /** Short Chinese hint when set A/B is rejected (invalid order). */
   loopFeedback: string | null
+  /** Seek playhead to the start of a 1-based measure (playing or paused). */
+  seekToMeasure: (measureIndex: number) => void
   togglePlayPause: () => void
 }
 
@@ -243,6 +247,15 @@ export function usePracticePlayer(
     setMetronomeEnabledState(player.metronome.enabled)
   }, [])
 
+  const seekToMeasure = useCallback((measureIndex: number) => {
+    const player = playerRef.current
+    if (!player) {
+      return
+    }
+    applyPlayhead(player, measureStartBeat(player.song, measureIndex))
+    setPlayheadBeat(getPlayhead(player))
+  }, [])
+
   const togglePlayPause = useCallback(() => {
     const player = playerRef.current
     if (!player) {
@@ -289,6 +302,7 @@ export function usePracticePlayer(
     metronomeEnabled,
     setMetronomeEnabled,
     loopFeedback,
+    seekToMeasure,
     togglePlayPause,
   }
 }

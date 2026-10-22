@@ -2,17 +2,35 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 6px;
   flex: 0 0 auto;
   margin: 0;
-  padding: 6px 10px;
-  border: 1px solid #999;
-  background: #eee;
+  padding: 2px 4px;
   font: inherit;
   font-size: 13px;
   color: #222;
   white-space: nowrap;
 }
 
+.measure-progress--disabled {
+  color: #555;
+  opacity: 0.85;
+}
+
 .measure-progress__label {
   flex: 0 0 auto;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.measure-progress__range {
+  width: 96px;
+  margin: 0;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.measure-progress--disabled .measure-progress__range {
+  cursor: not-allowed;
 }
