@@ -1,13 +1,34 @@
+import { notesAtPlayhead } from '../../domain/score/notesAtPlayhead.ts'
 import type { SongDocument } from '../../domain/score/types.ts'
-import { layoutTab } from './layout.ts'
+import { BEAT_WIDTH, PADDING_LEFT, layoutTab, stringY } from './layout.ts'
 import './TabSvg.css'
 
 export type TabSvgProps = {
   song: SongDocument
+  /** Absolute beat playhead; drives fret highlight and optional playhead line. */
+  playheadBeat?: number
 }
 
-export function TabSvg({ song }: TabSvgProps) {
+function noteKey(measureIndex: number, beat: number, string: number): string {
+  return `${measureIndex}:${beat}:${string}`
+}
+
+export function TabSvg({ song, playheadBeat }: TabSvgProps) {
   const layout = layoutTab(song)
+
+  const highlightedKeys =
+    playheadBeat === undefined
+      ? null
+      : new Set(
+          notesAtPlayhead(song, playheadBeat).map((a) =>
+            noteKey(a.measureIndex, a.note.beat, a.note.string),
+          ),
+        )
+
+  const playheadX =
+    playheadBeat === undefined
+      ? null
+      : PADDING_LEFT + playheadBeat * BEAT_WIDTH
 
   return (
     <svg
@@ -52,18 +73,46 @@ export function TabSvg({ song }: TabSvgProps) {
           {chord.chord}
         </text>
       ))}
-      {layout.notes.map((note, i) => (
-        <text
-          key={`n${note.measureIndex}-${note.beat}-${note.string}-${i}`}
-          className="tab-svg__fret"
-          x={note.x}
-          y={note.y}
-          textAnchor="middle"
-          dominantBaseline="central"
-        >
-          {note.fret}
-        </text>
-      ))}
+      {layout.notes.map((note, i) => {
+        const key = noteKey(note.measureIndex, note.beat, note.string)
+        const highlighted = highlightedKeys?.has(key) ?? false
+        return (
+          <g key={`n${note.measureIndex}-${note.beat}-${note.string}-${i}`}>
+            {highlighted ? (
+              <rect
+                className="tab-svg__fret-bg"
+                x={note.x - 9}
+                y={note.y - 10}
+                width={18}
+                height={20}
+                rx={3}
+              />
+            ) : null}
+            <text
+              className={
+                highlighted
+                  ? 'tab-svg__fret tab-svg__fret--active'
+                  : 'tab-svg__fret'
+              }
+              x={note.x}
+              y={note.y}
+              textAnchor="middle"
+              dominantBaseline="central"
+            >
+              {note.fret}
+            </text>
+          </g>
+        )
+      })}
+      {playheadX !== null ? (
+        <line
+          className="tab-svg__playhead"
+          x1={playheadX}
+          y1={stringY(1)}
+          x2={playheadX}
+          y2={stringY(6)}
+        />
+      ) : null}
     </svg>
   )
 }

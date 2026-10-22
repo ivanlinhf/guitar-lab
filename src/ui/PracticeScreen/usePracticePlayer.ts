@@ -15,6 +15,8 @@ import { soundScheduledNote } from './practicePlayback.ts'
 
 export type UsePracticePlayerResult = {
   isPlaying: boolean
+  /** Absolute beat playhead; updates each animation frame while playing. */
+  playheadBeat: number
   togglePlayPause: () => void
 }
 
@@ -27,6 +29,7 @@ export function usePracticePlayer(
   const songId = song?.id ?? null
   const playerRef = useRef<Player | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [playheadBeat, setPlayheadBeat] = useState(0)
   const [loadedSongId, setLoadedSongId] = useState(songId)
   const rafIdRef = useRef<number | null>(null)
   const lastTsRef = useRef<number | null>(null)
@@ -37,6 +40,7 @@ export function usePracticePlayer(
   if (songId !== loadedSongId) {
     setLoadedSongId(songId)
     setIsPlaying(false)
+    setPlayheadBeat(0)
   }
 
   useEffect(() => {
@@ -94,7 +98,10 @@ export function usePracticePlayer(
       }
       lastTsRef.current = timestamp
 
-      if (getPlayhead(player) >= songLengthBeats(player.song)) {
+      const head = getPlayhead(player)
+      setPlayheadBeat(head)
+
+      if (head >= songLengthBeats(player.song)) {
         pause(player)
         rafIdRef.current = null
         lastTsRef.current = null
@@ -141,6 +148,7 @@ export function usePracticePlayer(
 
   return {
     isPlaying,
+    playheadBeat,
     togglePlayPause,
   }
 }
