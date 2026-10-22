@@ -1,10 +1,19 @@
 import {
   absoluteBeat,
   beatToSeconds,
+  effectiveBpm,
   secondsToBeat,
   songLengthBeats,
 } from '../score/time.ts'
 import type { NoteEvent, RestEvent, SongDocument } from '../score/types.ts'
+
+/** Inclusive practice speed bounds (50%–100% of song BPM). */
+export const TEMPO_RATIO_MIN = 0.5
+export const TEMPO_RATIO_MAX = 1
+
+export function clampTempoRatio(tempoRatio: number): number {
+  return Math.min(TEMPO_RATIO_MAX, Math.max(TEMPO_RATIO_MIN, tempoRatio))
+}
 
 export interface ScheduledEvent {
   absoluteBeat: number
@@ -100,8 +109,22 @@ export function setPlayhead(player: Player, beat: number): Player {
   return player
 }
 
+export function getTempoRatio(player: Player): number {
+  return player.tempoRatio
+}
+
+/** Song BPM × current practice tempo ratio. */
+export function getEffectiveBpm(player: Player): number {
+  return effectiveBpm(player.song.bpm, player.tempoRatio)
+}
+
+/**
+ * Set practice speed, clamped to `[TEMPO_RATIO_MIN, TEMPO_RATIO_MAX]`.
+ * Keeps the current absolute beat (and schedule cursor) so the playhead
+ * does not jump when the ratio changes during playback.
+ */
 export function setTempoRatio(player: Player, tempoRatio: number): Player {
-  player.tempoRatio = tempoRatio
+  player.tempoRatio = clampTempoRatio(tempoRatio)
   return player
 }
 

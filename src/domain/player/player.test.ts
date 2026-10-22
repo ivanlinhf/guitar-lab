@@ -1,11 +1,20 @@
 import { describe, expect, it, vi } from 'vitest'
 import openStringsJson from '../../songs/open-strings.json'
 import { parseSongDocument } from '../score/schema.ts'
-import { absoluteBeat, songLengthBeats } from '../score/time.ts'
 import {
+  absoluteBeat,
+  beatToSeconds,
+  songLengthBeats,
+} from '../score/time.ts'
+import {
+  TEMPO_RATIO_MAX,
+  TEMPO_RATIO_MIN,
   buildTimeline,
+  clampTempoRatio,
   createPlayer,
+  getEffectiveBpm,
   getPlayhead,
+  getTempoRatio,
   onSchedule,
   pause,
   play,
@@ -77,13 +86,68 @@ describe('setPlayhead', () => {
   })
 })
 
+describe('clampTempoRatio', () => {
+  it('clamps to [0.5, 1.0]', () => {
+    expect(clampTempoRatio(0.25)).toBe(TEMPO_RATIO_MIN)
+    expect(clampTempoRatio(0.5)).toBe(0.5)
+    expect(clampTempoRatio(0.75)).toBe(0.75)
+    expect(clampTempoRatio(1)).toBe(TEMPO_RATIO_MAX)
+    expect(clampTempoRatio(1.5)).toBe(TEMPO_RATIO_MAX)
+  })
+})
+
 describe('setTempoRatio', () => {
   it('updates tempoRatio without moving the playhead', () => {
     const player = createPlayer(song)
     setPlayhead(player, 2)
     setTempoRatio(player, 0.5)
-    expect(player.tempoRatio).toBe(0.5)
+    expect(getTempoRatio(player)).toBe(0.5)
     expect(getPlayhead(player)).toBe(2)
+  })
+
+  it('clamps below 0.5 and above 1.0', () => {
+    const player = createPlayer(song)
+    setTempoRatio(player, 0.1)
+    expect(getTempoRatio(player)).toBe(0.5)
+    setTempoRatio(player, 2)
+    expect(getTempoRatio(player)).toBe(1)
+  })
+
+  it('keeps playhead beat when ratio changes during playback', () => {
+    const player = createPlayer(song)
+    play(player)
+    tick(player, 1.5) // 2 beats at ratio 1
+    expect(getPlayhead(player)).toBeCloseTo(2)
+    const scheduleIndex = player.nextScheduleIndex
+    setTempoRatio(player, 0.5)
+    expect(getPlayhead(player)).toBeCloseTo(2)
+    expect(player.nextScheduleIndex).toBe(scheduleIndex)
+  })
+
+  it('maps beatToSeconds / playheadSeconds at ratio 1.0 and 0.5', () => {
+    const player = createPlayer(song)
+    setPlayhead(player, 4)
+
+    setTempoRatio(player, 1)
+    expect(getEffectiveBpm(player)).toBe(song.bpm)
+    expect(playheadSeconds(player)).toBeCloseTo(beatToSeconds(4, song.bpm, 1))
+    expect(playheadSeconds(player)).toBeCloseTo(3)
+
+    setTempoRatio(player, 0.5)
+    expect(getEffectiveBpm(player)).toBe(song.bpm * 0.5)
+    expect(playheadSeconds(player)).toBeCloseTo(beatToSeconds(4, song.bpm, 0.5))
+    expect(playheadSeconds(player)).toBeCloseTo(6)
+    expect(getPlayhead(player)).toBe(4)
+  })
+
+  it('after mid-playback ratio change, further ticks use effective BPM', () => {
+    const player = createPlayer(song)
+    play(player)
+    tick(player, 1.5) // → beat 2 at ratio 1
+    setTempoRatio(player, 0.5)
+    // effective 40 BPM → 1.5 s/beat; 1.5 s → +1 beat
+    tick(player, 1.5)
+    expect(getPlayhead(player)).toBeCloseTo(3)
   })
 })
 
