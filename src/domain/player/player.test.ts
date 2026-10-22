@@ -41,6 +41,8 @@ describe('createPlayer', () => {
     expect(player.loopEnabled).toBe(false)
     expect(player.loopA).toBe(1)
     expect(player.loopB).toBe(lastMeasureIndex(song))
+    expect(player.countInEnabled).toBe(false)
+    expect(player.countInRemainingBeats).toBe(0)
     expect(player.song).toBe(song)
   })
 })
