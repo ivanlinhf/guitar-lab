@@ -47,6 +47,22 @@ export interface Player {
   loopA: number
   /** Inclusive loop end measure (1-based); must satisfy `loopA ≤ loopB`. */
   loopB: number
+  /**
+   * When true, each pause→play transition runs a one-measure count-in
+   * (`timeSignature.numerator` beats) before guitar notes schedule.
+   * A–B wrap does not re-enter count-in.
+   */
+  countInEnabled: boolean
+  /**
+   * Beats left in the active count-in; `0` when not counting in.
+   * Playhead stays frozen while this is positive.
+   */
+  countInRemainingBeats: number
+  /**
+   * Next integer elapsed beat to click during count-in
+   * (`0 .. numerator-1`). Meaningful only while counting in.
+   */
+  countInNextClickBeat: number
   /** Next timeline index to dispatch; advanced as events fire or on seek. */
   nextScheduleIndex: number
   readonly scheduleListeners: Set<ScheduleListener>
@@ -125,6 +141,9 @@ export function createPlayer(song: SongDocument): Player {
     loopEnabled: false,
     loopA: 1,
     loopB: last,
+    countInEnabled: false,
+    countInRemainingBeats: 0,
+    countInNextClickBeat: 0,
     nextScheduleIndex: 0,
     scheduleListeners: new Set(),
     metronome: createMetronome(0),
@@ -200,6 +219,25 @@ export function setLoopEnabled(player: Player, enabled: boolean): Player {
   return player
 }
 
+/** Whether play will run a count-in before guitar notes. */
+export function isCountInEnabled(player: Player): boolean {
+  return player.countInEnabled
+}
+
+/** Whether a count-in is currently in progress (playhead frozen). */
+export function isCountingIn(player: Player): boolean {
+  return player.countInRemainingBeats > 0
+}
+
+/** Enable or disable count-in on the next pause→play transition. */
+export function setCountInEnabled(
+  player: Player,
+  enabled: boolean,
+): Player {
+  player.countInEnabled = enabled
+  return player
+}
+
 /**
  * Set loop start measure. Clamps to `[1, lastMeasure]`.
  * Rejects (no-op) when the clamped value would be greater than `loopB`.
@@ -228,13 +266,24 @@ export function setLoopB(player: Player, measureIndex: number): Player {
   return player
 }
 
+/**
+ * Start playback. When count-in is enabled and the player was paused,
+ * begins a full `numerator`-beat count-in before guitar notes schedule.
+ * Calling while already playing is a no-op for count-in (does not restart it).
+ */
 export function play(player: Player): Player {
+  if (!player.isPlaying && player.countInEnabled) {
+    player.countInRemainingBeats = beatsPerMeasure(player.song)
+    player.countInNextClickBeat = 0
+  }
   player.isPlaying = true
   return player
 }
 
 export function pause(player: Player): Player {
   player.isPlaying = false
+  player.countInRemainingBeats = 0
+  player.countInNextClickBeat = 0
   return player
 }
 
@@ -255,18 +304,63 @@ export function onSchedule(
 /**
  * Advance the playhead by `deltaSeconds` and dispatch crossed events.
  * No-op when not playing. Clamps at the end of the song.
- * When looping is enabled and the playhead crosses the end of `loopB`,
- * seeks to the start of `loopA` (carrying any overflow within the loop).
+ * While counting in, consumes count-in beats (clicks only; no guitar) and
+ * carries any overflow into song playback. A–B wrap never re-enters count-in.
  */
 export function tick(player: Player, deltaSeconds: number): Player {
   if (!player.isPlaying) {
     return player
   }
-  const deltaBeats = secondsToBeat(
+  let deltaBeats = secondsToBeat(
     deltaSeconds,
     player.song.bpm,
     player.tempoRatio,
   )
+
+  if (player.countInRemainingBeats > 0) {
+    deltaBeats = tickCountIn(player, deltaBeats)
+    if (deltaBeats <= 0) {
+      return player
+    }
+  }
+
+  return tickSong(player, deltaBeats)
+}
+
+/**
+ * Consume up to `deltaBeats` of count-in. Fires count-in clicks through the
+ * metronome listener channel (even when the metronome is disabled).
+ * Returns leftover beats to apply to song playback after count-in ends.
+ */
+function tickCountIn(player: Player, deltaBeats: number): number {
+  const numerator = beatsPerMeasure(player.song)
+  const prevElapsed = numerator - player.countInRemainingBeats
+  const consumed = Math.min(deltaBeats, player.countInRemainingBeats)
+  const nextElapsed = prevElapsed + consumed
+  player.countInRemainingBeats -= consumed
+
+  // Count-in clicks are independent of metronome.enabled.
+  while (
+    player.countInNextClickBeat < numerator &&
+    player.countInNextClickBeat <= nextElapsed
+  ) {
+    const beat = player.countInNextClickBeat
+    player.countInNextClickBeat += 1
+    for (const listener of player.metronome.clickListeners) {
+      listener(beat)
+    }
+  }
+
+  if (player.countInRemainingBeats > 0) {
+    return 0
+  }
+
+  player.countInNextClickBeat = 0
+  return deltaBeats - consumed
+}
+
+/** Advance song playhead by `deltaBeats` (already converted from wall time). */
+function tickSong(player: Player, deltaBeats: number): Player {
   const prev = player.playheadBeat
   const next = prev + deltaBeats
 
