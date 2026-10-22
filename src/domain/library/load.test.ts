@@ -14,8 +14,22 @@ describe('listSongs', () => {
       { id: 'open-strings', title: 'Open Strings' },
       { id: 'c-am-switch', title: 'C–Am Switch' },
       { id: 'eight-bar-drill', title: 'Eight-Bar Drill' },
+      { id: 'twinkle-snippet', title: 'Twinkle Snippet' },
+      { id: 'g-c-d-switch', title: 'G–C–D Switch' },
     ])
+    expect(list.length).toBeGreaterThanOrEqual(5)
     expect(list).toHaveLength(songFixtures.length)
+  })
+
+  it('covers open-string, melody, and chord practice by id', () => {
+    const ids = new Set(listSongs().map((s) => s.id))
+    // Open-string drill
+    expect(ids.has('open-strings')).toBe(true)
+    // Simple melody
+    expect(ids.has('twinkle-snippet')).toBe(true)
+    // Chord switch / rhythm
+    expect(ids.has('c-am-switch')).toBe(true)
+    expect(ids.has('g-c-d-switch')).toBe(true)
   })
 
   it('skips invalid entries with console.warn and does not crash', () => {

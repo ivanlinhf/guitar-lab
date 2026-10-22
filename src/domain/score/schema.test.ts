@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import cAmSwitchJson from '../../songs/c-am-switch.json'
 import eightBarDrillJson from '../../songs/eight-bar-drill.json'
+import gCdSwitchJson from '../../songs/g-c-d-switch.json'
 import openStringsJson from '../../songs/open-strings.json'
+import twinkleSnippetJson from '../../songs/twinkle-snippet.json'
+import { songFixtures } from '../../songs/index.ts'
 import { parseSongDocument } from './schema.ts'
 import type { SongDocument } from './types.ts'
 
@@ -10,6 +13,16 @@ function cloneValid(): SongDocument {
 }
 
 describe('parseSongDocument', () => {
+  it('accepts every built-in song fixture', () => {
+    expect(songFixtures.length).toBeGreaterThanOrEqual(5)
+    for (const fixture of songFixtures) {
+      const doc = parseSongDocument(fixture)
+      expect(doc.formatVersion).toBe(1)
+      expect(doc.id).toBeTruthy()
+      expect(doc.measures.length).toBeGreaterThan(0)
+    }
+  })
+
   it('accepts open-strings fixture', () => {
     const doc = parseSongDocument(openStringsJson)
     expect(doc.id).toBe('open-strings')
@@ -27,6 +40,21 @@ describe('parseSongDocument', () => {
     expect(doc.id).toBe('eight-bar-drill')
     expect(doc.formatVersion).toBe(1)
     expect(doc.measures).toHaveLength(8)
+  })
+
+  it('accepts twinkle-snippet fixture', () => {
+    const doc = parseSongDocument(twinkleSnippetJson)
+    expect(doc.id).toBe('twinkle-snippet')
+    expect(doc.title).toBe('Twinkle Snippet')
+    expect(doc.measures).toHaveLength(4)
+  })
+
+  it('accepts g-c-d-switch fixture', () => {
+    const doc = parseSongDocument(gCdSwitchJson)
+    expect(doc.id).toBe('g-c-d-switch')
+    expect(doc.title).toBe('G–C–D Switch')
+    expect(doc.measures).toHaveLength(4)
+    expect(doc.measures.map((m) => m.chord)).toEqual(['G', 'C', 'D', 'G'])
   })
 
   it('rejects wrong formatVersion', () => {

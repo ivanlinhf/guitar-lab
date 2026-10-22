@@ -1,0 +1,51 @@
+{
+  "formatVersion": 1,
+  "id": "g-c-d-switch",
+  "title": "G–C–D Switch",
+  "description": "Four-bar G / C / D chord rhythm with simple switches",
+  "tuning": ["E4", "B3", "G3", "D3", "A2", "E2"],
+  "bpm": 72,
+  "timeSignature": { "numerator": 4, "denominator": 4 },
+  "measures": [
+    {
+      "index": 1,
+      "chord": "G",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 6, "fret": 3 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 5, "fret": 2 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 4, "fret": 0 },
+        { "type": "note", "beat": 3, "durationBeats": 1, "string": 3, "fret": 0 }
+      ]
+    },
+    {
+      "index": 2,
+      "chord": "C",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 5, "fret": 3 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 4, "fret": 2 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 3, "fret": 0 },
+        { "type": "note", "beat": 3, "durationBeats": 1, "string": 2, "fret": 1 }
+      ]
+    },
+    {
+      "index": 3,
+      "chord": "D",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 4, "fret": 0 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 3, "fret": 2 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 2, "fret": 3 },
+        { "type": "note", "beat": 3, "durationBeats": 1, "string": 1, "fret": 2 }
+      ]
+    },
+    {
+      "index": 4,
+      "chord": "G",
+      "events": [
+        { "type": "note", "beat": 0, "durationBeats": 1, "string": 6, "fret": 3 },
+        { "type": "note", "beat": 1, "durationBeats": 1, "string": 5, "fret": 2 },
+        { "type": "note", "beat": 2, "durationBeats": 1, "string": 4, "fret": 0 },
+        { "type": "note", "beat": 3, "durationBeats": 1, "string": 3, "fret": 0 }
+      ]
+    }
+  ]
+}
