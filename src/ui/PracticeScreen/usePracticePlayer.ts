@@ -19,7 +19,7 @@ import type { SongDocument } from '../../domain/score/types.ts'
 import { measureIndexFromPlayhead } from '../controls/measureIndexFromPlayhead.ts'
 import { soundScheduledNote } from './practicePlayback.ts'
 
-const LOOP_FEEDBACK_MS = 2500
+const LOOP_FEEDBACK_MS = 4000
 
 export type UsePracticePlayerResult = {
   isPlaying: boolean
@@ -55,7 +55,9 @@ export function usePracticePlayer(
   const [playheadBeat, setPlayheadBeat] = useState(0)
   const [tempoRatio, setTempoRatioState] = useState(1)
   const [loopA, setLoopAState] = useState(1)
-  const [loopB, setLoopBState] = useState(1)
+  const [loopB, setLoopBState] = useState(() =>
+    song ? lastMeasureIndex(song) : 1,
+  )
   const [loopEnabled, setLoopEnabledState] = useState(false)
   const [loopFeedback, setLoopFeedback] = useState<string | null>(null)
   const [loadedSongId, setLoadedSongId] = useState(songId)
