@@ -1,4 +1,5 @@
 import './MetronomeToggle.css'
+import { controlBarCopy } from './copy.ts'
 
 export type MetronomeToggleProps = {
   /** When true, the player schedules a click on each integer beat. */
@@ -22,7 +23,7 @@ export function MetronomeToggle({
           : 'metronome-toggle metronome-toggle--disabled'
       }
       role="group"
-      aria-label="节拍器"
+      aria-label={controlBarCopy.metronome}
     >
       <button
         type="button"
@@ -35,10 +36,10 @@ export function MetronomeToggle({
         aria-pressed={enabled ? metronomeEnabled : undefined}
         onClick={() => onMetronomeEnabledChange?.(!metronomeEnabled)}
       >
-        节拍器
+        {controlBarCopy.metronome}
       </button>
       <span className="metronome-toggle__state" aria-live="polite">
-        {metronomeEnabled ? '开' : '关'}
+        {metronomeEnabled ? controlBarCopy.on : controlBarCopy.off}
       </span>
     </div>
   )

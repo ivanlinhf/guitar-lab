@@ -1,4 +1,5 @@
 import './MeasureProgress.css'
+import { controlBarCopy } from './copy.ts'
 
 export type MeasureProgressProps = {
   /** 1-based measure containing the playhead. */
@@ -18,6 +19,7 @@ export function MeasureProgress({
   const disabled = onSeekToMeasure === undefined
   const max = Math.max(1, totalMeasures)
   const value = Math.min(Math.max(1, currentMeasure), max)
+  const label = controlBarCopy.measureProgress(value, max)
 
   return (
     <div
@@ -28,7 +30,7 @@ export function MeasureProgress({
       }
     >
       <label className="measure-progress__label" htmlFor="practice-measure-scrub">
-        小节 {value} / {max}
+        {label}
       </label>
       <input
         id="practice-measure-scrub"
@@ -39,11 +41,11 @@ export function MeasureProgress({
         step={1}
         value={value}
         disabled={disabled}
-        aria-label="小节进度"
+        aria-label={controlBarCopy.measureScrubLabel}
         aria-valuemin={1}
         aria-valuemax={max}
         aria-valuenow={value}
-        aria-valuetext={`小节 ${value} / ${max}`}
+        aria-valuetext={label}
         onChange={(event) => {
           onSeekToMeasure?.(Number(event.target.value))
         }}
