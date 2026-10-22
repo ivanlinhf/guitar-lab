@@ -63,6 +63,13 @@ export interface Player {
    * (`0 .. numerator-1`). Meaningful only while counting in.
    */
   countInNextClickBeat: number
+  /**
+   * When true, timeline events still advance the schedule cursor but
+   * `onSchedule` listeners are not called (no guitar tone). Metronome
+   * clicks are independent: if the metronome is off, playback is silent
+   * score-follow only.
+   */
+  guitarMuted: boolean
   /** Next timeline index to dispatch; advanced as events fire or on seek. */
   nextScheduleIndex: number
   readonly scheduleListeners: Set<ScheduleListener>
@@ -117,13 +124,16 @@ function firstScheduleIndexAtOrAfter(
 }
 
 function dispatchUpTo(player: Player, toBeat: number): void {
-  const { timeline, scheduleListeners } = player
+  const { timeline, scheduleListeners, guitarMuted } = player
   while (
     player.nextScheduleIndex < timeline.length &&
     timeline[player.nextScheduleIndex]!.absoluteBeat <= toBeat
   ) {
     const scheduled = timeline[player.nextScheduleIndex]!
     player.nextScheduleIndex += 1
+    if (guitarMuted) {
+      continue
+    }
     for (const listener of scheduleListeners) {
       listener(scheduled)
     }
@@ -144,6 +154,7 @@ export function createPlayer(song: SongDocument): Player {
     countInEnabled: false,
     countInRemainingBeats: 0,
     countInNextClickBeat: 0,
+    guitarMuted: false,
     nextScheduleIndex: 0,
     scheduleListeners: new Set(),
     metronome: createMetronome(0),
@@ -242,6 +253,21 @@ export function setCountInEnabled(
     player.countInRemainingBeats = 0
     player.countInNextClickBeat = 0
   }
+  return player
+}
+
+/** Whether guitar schedule callbacks are suppressed (click-only / silent follow). */
+export function isGuitarMuted(player: Player): boolean {
+  return player.guitarMuted
+}
+
+/**
+ * Mute or unmute guitar scheduling.
+ * While muted, the schedule cursor still advances so unmuting does not
+ * dump events that were crossed during mute. Metronome is unchanged.
+ */
+export function setGuitarMuted(player: Player, muted: boolean): Player {
+  player.guitarMuted = muted
   return player
 }
 
@@ -399,13 +425,16 @@ function tickSong(player: Player, deltaBeats: number): Player {
 
 /** Dispatch timeline events with `absoluteBeat < beforeBeat`. */
 function dispatchBefore(player: Player, beforeBeat: number): void {
-  const { timeline, scheduleListeners } = player
+  const { timeline, scheduleListeners, guitarMuted } = player
   while (
     player.nextScheduleIndex < timeline.length &&
     timeline[player.nextScheduleIndex]!.absoluteBeat < beforeBeat
   ) {
     const scheduled = timeline[player.nextScheduleIndex]!
     player.nextScheduleIndex += 1
+    if (guitarMuted) {
+      continue
+    }
     for (const listener of scheduleListeners) {
       listener(scheduled)
     }

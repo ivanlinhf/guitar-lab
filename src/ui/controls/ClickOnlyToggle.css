@@ -1,0 +1,32 @@
+.click-only-toggle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: 13px;
+  color: #222;
+}
+
+.click-only-toggle--disabled {
+  color: #555;
+  opacity: 0.85;
+}
+
+.click-only-toggle__state {
+  flex: 0 0 auto;
+  min-width: 1.5em;
+  white-space: nowrap;
+  color: #333;
+}
+
+.click-only-toggle--disabled .click-only-toggle__state {
+  color: #555;
+}
+
+.click-only-toggle button[aria-pressed='true'] {
+  background: #d0d8e8;
+  border-color: #667;
+  color: #111;
+}

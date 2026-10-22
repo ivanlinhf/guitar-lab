@@ -12,6 +12,7 @@ export const controlBarCopy = {
   setB: '设为 B',
   metronome: '节拍器',
   countIn: '预备拍',
+  clickOnly: '仅节拍',
   on: '开',
   off: '关',
   /** Placeholder when measure progress is not yet available. */
