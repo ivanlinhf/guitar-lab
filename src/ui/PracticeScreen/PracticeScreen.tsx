@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getSongById } from '../../domain/library/index.ts'
 import { TabSvg } from '../../render/tabSvg/index.ts'
 import {
@@ -7,6 +7,7 @@ import {
 } from '../controls/index.ts'
 import { BigFretPanel } from './BigFretPanel.tsx'
 import './PracticeScreen.css'
+import { shouldHandleSpacePlayPause } from './shouldHandleSpacePlayPause.ts'
 import { usePracticePlayer } from './usePracticePlayer.ts'
 
 export type PracticeScreenProps = {
@@ -42,6 +43,32 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
 
   /** Default off: TAB-only until the learner turns「大品格」on. */
   const [bigFretEnabled, setBigFretEnabled] = useState(false)
+
+  // Space toggles play/pause on Practice; skip when focus is editable.
+  useEffect(() => {
+    if (!song) {
+      return
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.code !== 'Space' || event.repeat) {
+        return
+      }
+      if (event.ctrlKey || event.metaKey || event.altKey) {
+        return
+      }
+      if (!shouldHandleSpacePlayPause(event.target)) {
+        return
+      }
+      event.preventDefault()
+      togglePlayPause()
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [song, togglePlayPause])
 
   const currentMeasure = song
     ? measureIndexFromPlayhead(song, playheadBeat)
