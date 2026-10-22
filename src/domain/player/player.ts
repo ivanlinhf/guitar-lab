@@ -1,6 +1,7 @@
 import {
   absoluteBeat,
   beatToSeconds,
+  beatsPerMeasure,
   effectiveBpm,
   secondsToBeat,
   songLengthBeats,
@@ -30,9 +31,28 @@ export interface Player {
   /** Practice speed multiplier; default 1. */
   tempoRatio: number
   isPlaying: boolean
+  /** When true, crossing the end of measure `loopB` seeks to the start of `loopA`. */
+  loopEnabled: boolean
+  /** Inclusive loop start measure (1-based). */
+  loopA: number
+  /** Inclusive loop end measure (1-based); must satisfy `loopA ≤ loopB`. */
+  loopB: number
   /** Next timeline index to dispatch; advanced as events fire or on seek. */
   nextScheduleIndex: number
   readonly scheduleListeners: Set<ScheduleListener>
+}
+
+/** Last measure index in the song (1-based). */
+export function lastMeasureIndex(song: SongDocument): number {
+  return song.measures[song.measures.length - 1]!.index
+}
+
+/** Absolute beat at the exclusive end of a measure (start of the next). */
+export function measureEndBeat(
+  song: SongDocument,
+  measureIndex: number,
+): number {
+  return absoluteBeat(song, measureIndex, 0) + beatsPerMeasure(song)
 }
 
 /** Timeline of note/rest starts, sorted by absolute beat. */
@@ -83,12 +103,16 @@ function dispatchUpTo(player: Player, toBeat: number): void {
 }
 
 export function createPlayer(song: SongDocument): Player {
+  const last = lastMeasureIndex(song)
   return {
     song,
     timeline: buildTimeline(song),
     playheadBeat: 0,
     tempoRatio: 1,
     isPlaying: false,
+    loopEnabled: false,
+    loopA: 1,
+    loopB: last,
     nextScheduleIndex: 0,
     scheduleListeners: new Set(),
   }
@@ -128,6 +152,39 @@ export function setTempoRatio(player: Player, tempoRatio: number): Player {
   return player
 }
 
+export function setLoopEnabled(player: Player, enabled: boolean): Player {
+  player.loopEnabled = enabled
+  return player
+}
+
+/**
+ * Set loop start measure. Clamps to `[1, lastMeasure]`.
+ * Rejects (no-op) when the clamped value would be greater than `loopB`.
+ */
+export function setLoopA(player: Player, measureIndex: number): Player {
+  const last = lastMeasureIndex(player.song)
+  const clamped = Math.min(Math.max(1, Math.trunc(measureIndex)), last)
+  if (clamped > player.loopB) {
+    return player
+  }
+  player.loopA = clamped
+  return player
+}
+
+/**
+ * Set loop end measure. Clamps to `[1, lastMeasure]`.
+ * Rejects (no-op) when the clamped value would be less than `loopA`.
+ */
+export function setLoopB(player: Player, measureIndex: number): Player {
+  const last = lastMeasureIndex(player.song)
+  const clamped = Math.min(Math.max(1, Math.trunc(measureIndex)), last)
+  if (clamped < player.loopA) {
+    return player
+  }
+  player.loopB = clamped
+  return player
+}
+
 export function play(player: Player): Player {
   player.isPlaying = true
   return player
@@ -155,6 +212,8 @@ export function onSchedule(
 /**
  * Advance the playhead by `deltaSeconds` and dispatch crossed events.
  * No-op when not playing. Clamps at the end of the song.
+ * When looping is enabled and the playhead crosses the end of `loopB`,
+ * seeks to the start of `loopA` (carrying any overflow within the loop).
  */
 export function tick(player: Player, deltaSeconds: number): Player {
   if (!player.isPlaying) {
@@ -165,9 +224,42 @@ export function tick(player: Player, deltaSeconds: number): Player {
     player.song.bpm,
     player.tempoRatio,
   )
-  setPlayheadWithoutReschedule(player, player.playheadBeat + deltaBeats)
+  const prev = player.playheadBeat
+  const next = prev + deltaBeats
+
+  if (player.loopEnabled) {
+    const endB = measureEndBeat(player.song, player.loopB)
+    if (prev < endB && next >= endB) {
+      dispatchBefore(player, endB)
+      const startA = absoluteBeat(player.song, player.loopA, 0)
+      const loopLen = endB - startA
+      const overflow = next - endB
+      const wrapped =
+        loopLen > 0 ? startA + (overflow % loopLen) : startA
+      setPlayhead(player, wrapped)
+      dispatchUpTo(player, player.playheadBeat)
+      return player
+    }
+  }
+
+  setPlayheadWithoutReschedule(player, next)
   dispatchUpTo(player, player.playheadBeat)
   return player
+}
+
+/** Dispatch timeline events with `absoluteBeat < beforeBeat`. */
+function dispatchBefore(player: Player, beforeBeat: number): void {
+  const { timeline, scheduleListeners } = player
+  while (
+    player.nextScheduleIndex < timeline.length &&
+    timeline[player.nextScheduleIndex]!.absoluteBeat < beforeBeat
+  ) {
+    const scheduled = timeline[player.nextScheduleIndex]!
+    player.nextScheduleIndex += 1
+    for (const listener of scheduleListeners) {
+      listener(scheduled)
+    }
+  }
 }
 
 /** Move playhead without resetting the schedule cursor (used by tick). */
