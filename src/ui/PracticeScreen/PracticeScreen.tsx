@@ -25,6 +25,8 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
     setLoopAToCurrentMeasure,
     setLoopBToCurrentMeasure,
     setLoopEnabled,
+    metronomeEnabled,
+    setMetronomeEnabled,
     loopFeedback,
     togglePlayPause,
   } = usePracticePlayer(song)
@@ -68,6 +70,8 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
           onSetLoopB={song ? setLoopBToCurrentMeasure : undefined}
           onLoopEnabledChange={song ? setLoopEnabled : undefined}
           loopFeedback={loopFeedback}
+          metronomeEnabled={metronomeEnabled}
+          onMetronomeEnabledChange={song ? setMetronomeEnabled : undefined}
         />
       </footer>
     </div>

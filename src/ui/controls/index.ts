@@ -3,6 +3,8 @@ export type { AbLoopControlsProps } from './AbLoopControls.tsx'
 export { ControlBar } from './ControlBar.tsx'
 export type { ControlBarProps } from './ControlBar.tsx'
 export { measureIndexFromPlayhead } from './measureIndexFromPlayhead.ts'
+export { MetronomeToggle } from './MetronomeToggle.tsx'
+export type { MetronomeToggleProps } from './MetronomeToggle.tsx'
 export { TempoSlider } from './TempoSlider.tsx'
 export type { TempoSliderProps } from './TempoSlider.tsx'
 export {

@@ -1,5 +1,6 @@
 import './ControlBar.css'
 import { AbLoopControls } from './AbLoopControls.tsx'
+import { MetronomeToggle } from './MetronomeToggle.tsx'
 import { TempoSlider } from './TempoSlider.tsx'
 
 export type ControlBarProps = {
@@ -21,9 +22,13 @@ export type ControlBarProps = {
   onLoopEnabledChange?: (enabled: boolean) => void
   /** Brief message when set A/B is rejected. */
   loopFeedback?: string | null
+  /** Metronome on/off. */
+  metronomeEnabled?: boolean
+  /** Called when the节拍器 toggle changes; when omitted the control stays disabled. */
+  onMetronomeEnabledChange?: (enabled: boolean) => void
 }
 
-/** Fixed practice bottom bar — play/pause, tempo, and A–B are live; others are placeholders. */
+/** Fixed practice bottom bar — play/pause, tempo, A–B, and metronome are live. */
 export function ControlBar({
   isPlaying = false,
   onPlayPause,
@@ -36,6 +41,8 @@ export function ControlBar({
   onSetLoopB,
   onLoopEnabledChange,
   loopFeedback = null,
+  metronomeEnabled = false,
+  onMetronomeEnabledChange,
 }: ControlBarProps) {
   const playEnabled = onPlayPause !== undefined
 
@@ -67,9 +74,10 @@ export function ControlBar({
         onLoopEnabledChange={onLoopEnabledChange}
         feedback={loopFeedback}
       />
-      <button type="button" className="control-bar__item" disabled>
-        节拍器
-      </button>
+      <MetronomeToggle
+        metronomeEnabled={metronomeEnabled}
+        onMetronomeEnabledChange={onMetronomeEnabledChange}
+      />
       <button type="button" className="control-bar__item" disabled>
         小节
       </button>
