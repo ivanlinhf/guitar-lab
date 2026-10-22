@@ -1,7 +1,10 @@
 import { useMemo } from 'react'
 import { getSongById } from '../../domain/library/index.ts'
 import { TabSvg } from '../../render/tabSvg/index.ts'
-import { ControlBar } from '../controls/index.ts'
+import {
+  ControlBar,
+  measureIndexFromPlayhead,
+} from '../controls/index.ts'
 import './PracticeScreen.css'
 import { usePracticePlayer } from './usePracticePlayer.ts'
 
@@ -30,6 +33,11 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
     loopFeedback,
     togglePlayPause,
   } = usePracticePlayer(song)
+
+  const currentMeasure = song
+    ? measureIndexFromPlayhead(song, playheadBeat)
+    : undefined
+  const measureTotal = song ? song.measures.length : undefined
 
   return (
     <div className="practice-screen">
@@ -72,6 +80,8 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
           loopFeedback={loopFeedback}
           metronomeEnabled={metronomeEnabled}
           onMetronomeEnabledChange={song ? setMetronomeEnabled : undefined}
+          currentMeasure={currentMeasure}
+          measureTotal={measureTotal}
         />
       </footer>
     </div>
