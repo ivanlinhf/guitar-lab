@@ -14,8 +14,20 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
   const song = useMemo(() => getSongById(songId), [songId])
   const title = song?.title ?? songId
   const bpmLabel = song ? `BPM ${song.bpm}` : null
-  const { isPlaying, playheadBeat, tempoRatio, setTempoRatio, togglePlayPause } =
-    usePracticePlayer(song)
+  const {
+    isPlaying,
+    playheadBeat,
+    tempoRatio,
+    setTempoRatio,
+    loopA,
+    loopB,
+    loopEnabled,
+    setLoopAToCurrentMeasure,
+    setLoopBToCurrentMeasure,
+    setLoopEnabled,
+    loopFeedback,
+    togglePlayPause,
+  } = usePracticePlayer(song)
 
   return (
     <div className="practice-screen">
@@ -49,6 +61,13 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
           onPlayPause={song ? togglePlayPause : undefined}
           tempoRatio={tempoRatio}
           onTempoRatioChange={song ? setTempoRatio : undefined}
+          loopA={loopA}
+          loopB={loopB}
+          loopEnabled={loopEnabled}
+          onSetLoopA={song ? setLoopAToCurrentMeasure : undefined}
+          onSetLoopB={song ? setLoopBToCurrentMeasure : undefined}
+          onLoopEnabledChange={song ? setLoopEnabled : undefined}
+          loopFeedback={loopFeedback}
         />
       </footer>
     </div>
