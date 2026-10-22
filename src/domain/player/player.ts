@@ -1,4 +1,14 @@
 import {
+  advanceMetronomeBefore,
+  advanceMetronomeTo,
+  createMetronome,
+  onMetronomeClick,
+  setMetronomeEnabled as applyMetronomeEnabled,
+  syncMetronomePlayhead,
+  type Metronome,
+  type MetronomeClickListener,
+} from '../metronome/index.ts'
+import {
   absoluteBeat,
   beatToSeconds,
   beatsPerMeasure,
@@ -40,6 +50,8 @@ export interface Player {
   /** Next timeline index to dispatch; advanced as events fire or on seek. */
   nextScheduleIndex: number
   readonly scheduleListeners: Set<ScheduleListener>
+  /** Beat-aligned click clock; shares the playhead as its time source. */
+  metronome: Metronome
 }
 
 /** Last measure index in the song (1-based). */
@@ -115,6 +127,7 @@ export function createPlayer(song: SongDocument): Player {
     loopB: last,
     nextScheduleIndex: 0,
     scheduleListeners: new Set(),
+    metronome: createMetronome(0),
   }
 }
 
@@ -130,7 +143,37 @@ export function setPlayhead(player: Player, beat: number): Player {
     player.timeline,
     player.playheadBeat,
   )
+  syncMetronomePlayhead(player.metronome, player.playheadBeat)
   return player
+}
+
+/** Whether the player's metronome will schedule clicks on beat boundaries. */
+export function isMetronomeEnabled(player: Player): boolean {
+  return player.metronome.enabled
+}
+
+/**
+ * Enable or disable metronome clicks.
+ * When enabling, realigns to the current playhead so beats skipped while
+ * disabled are not dumped in a burst.
+ */
+export function setMetronomeEnabled(
+  player: Player,
+  enabled: boolean,
+): Player {
+  applyMetronomeEnabled(player.metronome, enabled, player.playheadBeat)
+  return player
+}
+
+/**
+ * Subscribe to metronome click callbacks (integer absolute beats).
+ * Returns unsubscribe.
+ */
+export function onMetronome(
+  player: Player,
+  listener: MetronomeClickListener,
+): () => void {
+  return onMetronomeClick(player.metronome, listener)
 }
 
 export function getTempoRatio(player: Player): number {
@@ -231,6 +274,7 @@ export function tick(player: Player, deltaSeconds: number): Player {
     const endB = measureEndBeat(player.song, player.loopB)
     if (prev < endB && next >= endB) {
       dispatchBefore(player, endB)
+      advanceMetronomeBefore(player.metronome, endB)
       const startA = absoluteBeat(player.song, player.loopA, 0)
       const loopLen = endB - startA
       const overflow = next - endB
@@ -238,12 +282,17 @@ export function tick(player: Player, deltaSeconds: number): Player {
         loopLen > 0 ? startA + (overflow % loopLen) : startA
       setPlayhead(player, wrapped)
       dispatchUpTo(player, player.playheadBeat)
+      // setPlayhead synced nextBeat from the overshot playhead; realign from
+      // startA so the loop-start downbeat still clicks under rAF overflow.
+      syncMetronomePlayhead(player.metronome, startA)
+      advanceMetronomeTo(player.metronome, player.playheadBeat)
       return player
     }
   }
 
   setPlayheadWithoutReschedule(player, next)
   dispatchUpTo(player, player.playheadBeat)
+  advanceMetronomeTo(player.metronome, player.playheadBeat)
   return player
 }
 

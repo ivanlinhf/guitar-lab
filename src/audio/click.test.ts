@@ -21,4 +21,8 @@ describe('playClick', () => {
   it('rejects when Web Audio is unavailable', async () => {
     await expect(playClick()).rejects.toThrow(/Web Audio/)
   })
+
+  it('accepts an optional when (AudioContext time)', async () => {
+    await expect(playClick({ when: 0 })).rejects.toThrow(/Web Audio/)
+  })
 })
