@@ -30,6 +30,8 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
     setLoopEnabled,
     metronomeEnabled,
     setMetronomeEnabled,
+    countInEnabled,
+    setCountInEnabled,
     loopFeedback,
     seekToMeasure,
     togglePlayPause,
@@ -81,6 +83,8 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
           loopFeedback={loopFeedback}
           metronomeEnabled={metronomeEnabled}
           onMetronomeEnabledChange={song ? setMetronomeEnabled : undefined}
+          countInEnabled={countInEnabled}
+          onCountInEnabledChange={song ? setCountInEnabled : undefined}
           currentMeasure={currentMeasure}
           measureTotal={measureTotal}
           onSeekToMeasure={song ? seekToMeasure : undefined}

@@ -11,6 +11,7 @@ import {
   setLoopA as applyLoopA,
   setLoopB as applyLoopB,
   setLoopEnabled as applyLoopEnabled,
+  setCountInEnabled as applyCountInEnabled,
   setMetronomeEnabled as applyMetronomeEnabled,
   setPlayhead as applyPlayhead,
   setTempoRatio as applyTempoRatio,
@@ -45,6 +46,9 @@ export type UsePracticePlayerResult = {
   /** Metronome on/off; click aligns to integer beats at effective BPM. */
   metronomeEnabled: boolean
   setMetronomeEnabled: (enabled: boolean) => void
+  /** Count-in on/off; when on, play runs a one-measure prep before guitar. */
+  countInEnabled: boolean
+  setCountInEnabled: (enabled: boolean) => void
   /** Short Chinese hint when set A/B is rejected (invalid order). */
   loopFeedback: string | null
   /** Seek playhead to the start of a 1-based measure (playing or paused). */
@@ -69,6 +73,7 @@ export function usePracticePlayer(
   )
   const [loopEnabled, setLoopEnabledState] = useState(false)
   const [metronomeEnabled, setMetronomeEnabledState] = useState(false)
+  const [countInEnabled, setCountInEnabledState] = useState(false)
   const [loopFeedback, setLoopFeedback] = useState<string | null>(null)
   const [loadedSongId, setLoadedSongId] = useState(songId)
   const rafIdRef = useRef<number | null>(null)
@@ -87,6 +92,7 @@ export function usePracticePlayer(
     setLoopBState(song ? lastMeasureIndex(song) : 1)
     setLoopEnabledState(false)
     setMetronomeEnabledState(false)
+    setCountInEnabledState(false)
     setLoopFeedback(null)
   }
 
@@ -247,6 +253,15 @@ export function usePracticePlayer(
     setMetronomeEnabledState(player.metronome.enabled)
   }, [])
 
+  const setCountInEnabled = useCallback((enabled: boolean) => {
+    const player = playerRef.current
+    if (!player) {
+      return
+    }
+    applyCountInEnabled(player, enabled)
+    setCountInEnabledState(player.countInEnabled)
+  }, [])
+
   const seekToMeasure = useCallback((measureIndex: number) => {
     const player = playerRef.current
     if (!player) {
@@ -301,6 +316,8 @@ export function usePracticePlayer(
     setLoopEnabled,
     metronomeEnabled,
     setMetronomeEnabled,
+    countInEnabled,
+    setCountInEnabled,
     loopFeedback,
     seekToMeasure,
     togglePlayPause,

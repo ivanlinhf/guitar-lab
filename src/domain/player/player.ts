@@ -229,12 +229,19 @@ export function isCountingIn(player: Player): boolean {
   return player.countInRemainingBeats > 0
 }
 
-/** Enable or disable count-in on the next pause→play transition. */
+/**
+ * Enable or disable count-in on the next pause→play transition.
+ * Disabling clears any in-progress count-in so guitar can resume immediately.
+ */
 export function setCountInEnabled(
   player: Player,
   enabled: boolean,
 ): Player {
   player.countInEnabled = enabled
+  if (!enabled) {
+    player.countInRemainingBeats = 0
+    player.countInNextClickBeat = 0
+  }
   return player
 }
 

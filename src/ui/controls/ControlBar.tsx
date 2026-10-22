@@ -2,6 +2,7 @@ import './ControlBar.css'
 import { AbLoopControls } from './AbLoopControls.tsx'
 import { controlBarCopy } from './copy.ts'
 import { MeasureProgress } from './MeasureProgress.tsx'
+import { CountInToggle } from './CountInToggle.tsx'
 import { MetronomeToggle } from './MetronomeToggle.tsx'
 import { TempoSlider } from './TempoSlider.tsx'
 
@@ -28,6 +29,10 @@ export type ControlBarProps = {
   metronomeEnabled?: boolean
   /** Called when the节拍器 toggle changes; when omitted the control stays disabled. */
   onMetronomeEnabledChange?: (enabled: boolean) => void
+  /** Count-in on/off. */
+  countInEnabled?: boolean
+  /** Called when the预备拍 toggle changes; when omitted the control stays disabled. */
+  onCountInEnabledChange?: (enabled: boolean) => void
   /** 1-based measure at the playhead; when set with measureTotal, shows progress. */
   currentMeasure?: number
   /** Total measures (`measures.length`); omit with currentMeasure for the placeholder. */
@@ -38,7 +43,7 @@ export type ControlBarProps = {
 
 /**
  * Fixed practice bottom bar, L→R:
- * 播放/暂停 → 速度 → A–B → 节拍器 → 小节/scrub.
+ * 播放/暂停 → 速度 → A–B → 节拍器 → 预备拍 → 小节/scrub.
  */
 export function ControlBar({
   isPlaying = false,
@@ -54,6 +59,8 @@ export function ControlBar({
   loopFeedback = null,
   metronomeEnabled = false,
   onMetronomeEnabledChange,
+  countInEnabled = false,
+  onCountInEnabledChange,
   currentMeasure,
   measureTotal,
   onSeekToMeasure,
@@ -93,6 +100,10 @@ export function ControlBar({
       <MetronomeToggle
         metronomeEnabled={metronomeEnabled}
         onMetronomeEnabledChange={onMetronomeEnabledChange}
+      />
+      <CountInToggle
+        countInEnabled={countInEnabled}
+        onCountInEnabledChange={onCountInEnabledChange}
       />
       {showMeasureProgress ? (
         <MeasureProgress

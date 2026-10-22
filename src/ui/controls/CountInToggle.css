@@ -1,0 +1,32 @@
+.count-in-toggle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: 13px;
+  color: #222;
+}
+
+.count-in-toggle--disabled {
+  color: #555;
+  opacity: 0.85;
+}
+
+.count-in-toggle__state {
+  flex: 0 0 auto;
+  min-width: 1.5em;
+  white-space: nowrap;
+  color: #333;
+}
+
+.count-in-toggle--disabled .count-in-toggle__state {
+  color: #555;
+}
+
+.count-in-toggle button[aria-pressed='true'] {
+  background: #d0d8e8;
+  border-color: #667;
+  color: #111;
+}
