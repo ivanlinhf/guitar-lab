@@ -14,7 +14,8 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
   const song = useMemo(() => getSongById(songId), [songId])
   const title = song?.title ?? songId
   const bpmLabel = song ? `BPM ${song.bpm}` : null
-  const { isPlaying, playheadBeat, togglePlayPause } = usePracticePlayer(song)
+  const { isPlaying, playheadBeat, tempoRatio, setTempoRatio, togglePlayPause } =
+    usePracticePlayer(song)
 
   return (
     <div className="practice-screen">
@@ -46,6 +47,8 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
         <ControlBar
           isPlaying={isPlaying}
           onPlayPause={song ? togglePlayPause : undefined}
+          tempoRatio={tempoRatio}
+          onTempoRatioChange={song ? setTempoRatio : undefined}
         />
       </footer>
     </div>

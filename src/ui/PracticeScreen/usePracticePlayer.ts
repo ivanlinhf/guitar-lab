@@ -6,6 +6,7 @@ import {
   onSchedule,
   pause,
   play,
+  setTempoRatio as applyTempoRatio,
   tick,
   type Player,
 } from '../../domain/player/index.ts'
@@ -17,6 +18,9 @@ export type UsePracticePlayerResult = {
   isPlaying: boolean
   /** Absolute beat playhead; updates each animation frame while playing. */
   playheadBeat: number
+  /** Practice speed multiplier in `[0.5, 1]`; default `1`. */
+  tempoRatio: number
+  setTempoRatio: (tempoRatio: number) => void
   togglePlayPause: () => void
 }
 
@@ -30,6 +34,7 @@ export function usePracticePlayer(
   const playerRef = useRef<Player | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [playheadBeat, setPlayheadBeat] = useState(0)
+  const [tempoRatio, setTempoRatioState] = useState(1)
   const [loadedSongId, setLoadedSongId] = useState(songId)
   const rafIdRef = useRef<number | null>(null)
   const lastTsRef = useRef<number | null>(null)
@@ -41,6 +46,7 @@ export function usePracticePlayer(
     setLoadedSongId(songId)
     setIsPlaying(false)
     setPlayheadBeat(0)
+    setTempoRatioState(1)
   }
 
   useEffect(() => {
@@ -114,6 +120,15 @@ export function usePracticePlayer(
     rafIdRef.current = requestAnimationFrame(step)
   }, [stopClock])
 
+  const setTempoRatio = useCallback((nextRatio: number) => {
+    const player = playerRef.current
+    if (!player) {
+      return
+    }
+    applyTempoRatio(player, nextRatio)
+    setTempoRatioState(player.tempoRatio)
+  }, [])
+
   const togglePlayPause = useCallback(() => {
     const player = playerRef.current
     if (!player) {
@@ -149,6 +164,8 @@ export function usePracticePlayer(
   return {
     isPlaying,
     playheadBeat,
+    tempoRatio,
+    setTempoRatio,
     togglePlayPause,
   }
 }
