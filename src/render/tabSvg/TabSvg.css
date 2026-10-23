@@ -9,13 +9,13 @@
 }
 
 .tab-svg__string {
-  stroke: #333;
+  stroke: var(--ink-muted);
   stroke-width: 1;
   fill: none;
 }
 
 .tab-svg__bar {
-  stroke: #222;
+  stroke: var(--ink);
   stroke-width: 1.5;
   fill: none;
 }
@@ -25,36 +25,36 @@
 }
 
 .tab-svg__chord {
-  fill: #222;
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  fill: var(--ink);
+  font-family: var(--font-ui);
   font-size: 13px;
   font-weight: 600;
 }
 
 .tab-svg__fret {
-  fill: #111;
-  font-family: ui-monospace, 'Cascadia Code', 'Segoe UI Mono', monospace;
+  fill: var(--ink);
+  font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 600;
   /* Punch a small gap in the string behind the digit. */
   paint-order: stroke fill;
-  stroke: #fafafa;
+  stroke: var(--bg-score);
   stroke-width: 4px;
 }
 
 .tab-svg__fret-bg {
-  fill: #1a6b4a;
+  fill: var(--accent);
   opacity: 0.9;
 }
 
 .tab-svg__fret--active {
-  fill: #fff;
-  stroke: #1a6b4a;
+  fill: var(--on-accent);
+  stroke: var(--accent);
   stroke-width: 3px;
 }
 
 .tab-svg__playhead {
-  stroke: #1a6b4a;
+  stroke: var(--accent);
   stroke-width: 1.5;
   stroke-opacity: 0.55;
   fill: none;

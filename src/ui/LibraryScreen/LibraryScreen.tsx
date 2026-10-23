@@ -11,7 +11,12 @@ export function LibraryScreen({ onStartPractice }: LibraryScreenProps) {
 
   return (
     <div className="library-screen">
-      <h1 className="library-screen__title">练习曲库</h1>
+      <header className="library-screen__hero">
+        <p className="library-screen__brand">
+          Guitar <em className="library-screen__brand-em">Lab</em>
+        </p>
+        <h1 className="library-screen__title">练习曲库</h1>
+      </header>
       <ul className="library-screen__list">
         {songs.map((song) => {
           const start = () => onStartPractice?.(song.id)

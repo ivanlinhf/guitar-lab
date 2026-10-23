@@ -4,14 +4,14 @@
   align-items: center;
   gap: 6px;
   flex: 0 0 auto;
-  padding: 2px 4px;
+  padding: 2px var(--space-1);
   font: inherit;
-  font-size: 13px;
-  color: #222;
+  font-size: 0.8125rem;
+  color: var(--ink);
 }
 
 .tempo-slider--disabled {
-  color: #555;
+  color: var(--ink-faint);
   opacity: 0.85;
 }
 
@@ -26,6 +26,7 @@
   margin: 0;
   vertical-align: middle;
   cursor: pointer;
+  accent-color: var(--accent);
 }
 
 .tempo-slider--disabled .tempo-slider__range {
@@ -37,4 +38,5 @@
   min-width: 2.75em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  color: var(--ink-muted);
 }

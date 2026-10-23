@@ -1,23 +1,84 @@
-/* Wireframe-level global shell. Visual polish comes later. */
+/* Mist Paper · Forest Ink — global tokens and page base. */
 
 :root {
-  font-family: system-ui, 'Segoe UI', sans-serif;
+  /* Color */
+  --bg-page: #eef3f0;
+  --bg-page-2: #e4ebe7;
+  --bg-elevated: #f7faf8;
+  --bg-score: #fafcfb;
+  --ink: #1a2420;
+  --ink-muted: #5a6b63;
+  --ink-faint: #8a9a92;
+  --line: #d0dbd4;
+  --accent: #2f6b4f;
+  --accent-soft: #e4f0e9;
+  --on-accent: #f7faf8;
+
+  /* Type */
+  --font-display: 'Fraunces', 'Noto Serif SC', 'Songti SC', serif;
+  --font-ui: 'Source Sans 3', 'Noto Sans SC', 'WenQuanYi Micro Hei',
+    'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+
+  /* Spacing (8px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Radius — no pills */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  /* Atmosphere */
+  --shadow-score: 0 1px 2px rgb(26 36 32 / 0.04);
+
+  font-family: var(--font-ui);
   font-size: 16px;
   line-height: 1.4;
-  color: #111;
-  background: #fff;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--bg-page);
+  background-image:
+    radial-gradient(
+      120% 80% at 50% -10%,
+      rgb(247 250 248 / 0.9) 0%,
+      transparent 55%
+    ),
+    linear-gradient(165deg, var(--bg-page) 0%, var(--bg-page-2) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.1 0 0 0 0 0.14 0 0 0 0 0.12 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-attachment: fixed;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#root {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+#root {
   min-height: 100svh;
   width: 100%;
 }
 
 body {
   margin: 0;
+  min-height: 100svh;
+  color: var(--ink);
+  background: transparent;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
 }

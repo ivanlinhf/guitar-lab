@@ -5,12 +5,12 @@
   gap: 6px;
   flex: 0 0 auto;
   font: inherit;
-  font-size: 13px;
-  color: #222;
+  font-size: 0.8125rem;
+  color: var(--ink);
 }
 
 .click-only-toggle--disabled {
-  color: #555;
+  color: var(--ink-faint);
   opacity: 0.85;
 }
 
@@ -18,15 +18,15 @@
   flex: 0 0 auto;
   min-width: 1.5em;
   white-space: nowrap;
-  color: #333;
+  color: var(--ink-muted);
 }
 
 .click-only-toggle--disabled .click-only-toggle__state {
-  color: #555;
+  color: var(--ink-faint);
 }
 
 .click-only-toggle button[aria-pressed='true'] {
-  background: #d0d8e8;
-  border-color: #667;
-  color: #111;
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
 }
