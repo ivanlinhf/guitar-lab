@@ -89,7 +89,7 @@ export function ControlBar({
         type="button"
         className={
           playEnabled
-            ? 'control-bar__item control-bar__item--active'
+            ? 'control-bar__item control-bar__item--active control-bar__item--primary'
             : 'control-bar__item'
         }
         disabled={!playEnabled}

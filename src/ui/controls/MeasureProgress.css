@@ -5,15 +5,15 @@
   gap: 6px;
   flex: 0 0 auto;
   margin: 0;
-  padding: 2px 4px;
+  padding: 2px var(--space-1);
   font: inherit;
-  font-size: 13px;
-  color: #222;
+  font-size: 0.8125rem;
+  color: var(--ink);
   white-space: nowrap;
 }
 
 .measure-progress--disabled {
-  color: #555;
+  color: var(--ink-faint);
   opacity: 0.85;
 }
 
@@ -29,6 +29,7 @@
   margin: 0;
   vertical-align: middle;
   cursor: pointer;
+  accent-color: var(--accent);
 }
 
 .measure-progress--disabled .measure-progress__range {

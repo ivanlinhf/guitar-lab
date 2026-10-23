@@ -1,15 +1,14 @@
 .big-fret-panel {
-  box-sizing: border-box;
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
   width: min(220px, 32vw);
   min-width: 140px;
-  padding: 16px 14px;
-  border-right: 1px solid #ccc;
-  background: #fff;
-  color: #111;
+  padding: var(--space-4) 14px;
+  border-right: 1px solid var(--line);
+  background: var(--bg-elevated);
+  color: var(--ink);
   overflow: auto;
 }
 
@@ -18,11 +17,11 @@
 }
 
 .big-fret-panel__heading {
-  margin: 0 0 8px;
-  font-size: 13px;
+  margin: 0 0 var(--space-2);
+  font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: #444;
+  color: var(--ink-muted);
 }
 
 .big-fret-panel__fingers {
@@ -44,18 +43,19 @@
 .big-fret-panel__string {
   font-size: 28px;
   font-weight: 700;
-  color: #111;
+  color: var(--ink);
 }
 
 .big-fret-panel__fret {
+  font-family: var(--font-mono);
   font-size: 36px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--ink);
 }
 
 .big-fret-panel__empty {
   margin: 0;
   font-size: 28px;
   font-weight: 600;
-  color: #888;
+  color: var(--ink-faint);
 }

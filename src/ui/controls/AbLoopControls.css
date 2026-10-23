@@ -5,12 +5,12 @@
   gap: 6px;
   flex: 0 0 auto;
   font: inherit;
-  font-size: 13px;
-  color: #222;
+  font-size: 0.8125rem;
+  color: var(--ink);
 }
 
 .ab-loop-controls--disabled {
-  color: #555;
+  color: var(--ink-faint);
   opacity: 0.85;
 }
 
@@ -20,20 +20,20 @@
   min-width: 5.5em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-  color: #333;
+  color: var(--ink-muted);
 }
 
 .ab-loop-controls--disabled .ab-loop-controls__range {
-  color: #555;
+  color: var(--ink-faint);
 }
 
 .ab-loop-controls__range--feedback {
   color: #8a1f1f;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .ab-loop-controls button[aria-pressed='true'] {
-  background: #d0d8e8;
-  border-color: #667;
-  color: #111;
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
 }
