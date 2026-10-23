@@ -38,6 +38,19 @@
   /* Atmosphere */
   --shadow-score: 0 1px 2px rgb(26 36 32 / 0.04);
 
+  /* Motion — presence only; gated by prefers-reduced-motion below */
+  --motion-enter-duration: 240ms;
+  --motion-enter-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-enter-distance: 10px;
+  --motion-press-duration: 60ms;
+  --motion-crossfade-duration: 120ms;
+  --motion-play-ease: ease-in-out;
+  --motion-press-scale: 0.96;
+  --motion-settle-duration: 100ms;
+  --motion-settle-ease: ease-out;
+  --motion-settle-scale: 0.97;
+  --motion-settle-opacity-from: 0.85;
+
   font-family: var(--font-ui);
   font-size: 16px;
   line-height: 1.4;
@@ -83,4 +96,14 @@ select,
 textarea {
   font: inherit;
   color: inherit;
+}
+
+/* Snap all intentional motions to end state when reduced motion is preferred. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-enter-duration: 0ms;
+    --motion-press-duration: 0ms;
+    --motion-crossfade-duration: 0ms;
+    --motion-settle-duration: 0ms;
+  }
 }
