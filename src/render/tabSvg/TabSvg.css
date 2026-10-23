@@ -46,6 +46,14 @@
 .tab-svg__fret-bg {
   fill: var(--accent);
   opacity: 1;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tab-fret-settle var(--motion-settle-duration)
+    var(--motion-settle-ease) both;
+}
+
+.tab-svg__fret-bg--instant {
+  animation: none;
 }
 
 .tab-svg__fret--active {
@@ -60,4 +68,43 @@
   stroke-opacity: 0.5;
   fill: none;
   pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tab-playhead-settle var(--motion-settle-duration)
+    var(--motion-settle-ease) both;
+}
+
+.tab-svg__playhead--instant {
+  animation: none;
+}
+
+@keyframes tab-fret-settle {
+  from {
+    opacity: var(--motion-settle-opacity-from);
+    transform: scale(var(--motion-settle-scale));
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes tab-playhead-settle {
+  from {
+    stroke-opacity: 0.35;
+    transform: scaleY(var(--motion-settle-scale));
+  }
+
+  to {
+    stroke-opacity: 0.5;
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-svg__fret-bg,
+  .tab-svg__playhead {
+    animation: none;
+  }
 }

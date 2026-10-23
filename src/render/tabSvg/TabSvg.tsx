@@ -1,6 +1,7 @@
 import { notesAtPlayhead } from '../../domain/score/notesAtPlayhead.ts'
 import type { SongDocument } from '../../domain/score/types.ts'
 import { BEAT_WIDTH, PADDING_LEFT, layoutTab, stringY } from './layout.ts'
+import { useFretSettle } from './useFretSettle.ts'
 import './TabSvg.css'
 
 export type TabSvgProps = {
@@ -11,6 +12,13 @@ export type TabSvgProps = {
 
 function noteKey(measureIndex: number, beat: number, string: number): string {
   return `${measureIndex}:${beat}:${string}`
+}
+
+function highlightSignature(keys: Set<string> | null): string {
+  if (keys === null || keys.size === 0) {
+    return ''
+  }
+  return [...keys].sort().join('|')
 }
 
 export function TabSvg({ song, playheadBeat }: TabSvgProps) {
@@ -25,10 +33,20 @@ export function TabSvg({ song, playheadBeat }: TabSvgProps) {
           ),
         )
 
+  const keysSig = highlightSignature(highlightedKeys)
+  const animateSettle = useFretSettle(playheadBeat, keysSig)
+
   const playheadX =
     playheadBeat === undefined
       ? null
       : PADDING_LEFT + playheadBeat * BEAT_WIDTH
+
+  const fretBgClass = animateSettle
+    ? 'tab-svg__fret-bg'
+    : 'tab-svg__fret-bg tab-svg__fret-bg--instant'
+  const playheadClass = animateSettle
+    ? 'tab-svg__playhead'
+    : 'tab-svg__playhead tab-svg__playhead--instant'
 
   return (
     <svg
@@ -80,7 +98,7 @@ export function TabSvg({ song, playheadBeat }: TabSvgProps) {
           <g key={`n${note.measureIndex}-${note.beat}-${note.string}-${i}`}>
             {highlighted ? (
               <rect
-                className="tab-svg__fret-bg"
+                className={fretBgClass}
                 x={note.x - 9}
                 y={note.y - 10}
                 width={18}
@@ -106,7 +124,8 @@ export function TabSvg({ song, playheadBeat }: TabSvgProps) {
       })}
       {playheadX !== null ? (
         <line
-          className="tab-svg__playhead"
+          key={keysSig || 'playhead'}
+          className={playheadClass}
           x1={playheadX}
           y1={stringY(1)}
           x2={playheadX}

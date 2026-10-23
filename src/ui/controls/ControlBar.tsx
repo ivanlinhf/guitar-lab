@@ -6,6 +6,7 @@ import { BigFretToggle } from './BigFretToggle.tsx'
 import { ClickOnlyToggle } from './ClickOnlyToggle.tsx'
 import { CountInToggle } from './CountInToggle.tsx'
 import { MetronomeToggle } from './MetronomeToggle.tsx'
+import { PlayPauseButton } from './PlayPauseButton.tsx'
 import { TempoSlider } from './TempoSlider.tsx'
 
 export type ControlBarProps = {
@@ -79,26 +80,13 @@ export function ControlBar({
   measureTotal,
   onSeekToMeasure,
 }: ControlBarProps) {
-  const playEnabled = onPlayPause !== undefined
   const showMeasureProgress =
     currentMeasure !== undefined && measureTotal !== undefined
 
   return (
     <div className="control-bar" role="toolbar" aria-label={controlBarCopy.toolbarLabel}>
       <div className="control-bar__group">
-        <button
-          type="button"
-          className={
-            playEnabled
-              ? 'control-bar__item control-bar__item--active control-bar__item--primary'
-              : 'control-bar__item'
-          }
-          disabled={!playEnabled}
-          onClick={onPlayPause}
-          aria-pressed={playEnabled ? isPlaying : undefined}
-        >
-          {isPlaying ? controlBarCopy.pause : controlBarCopy.play}
-        </button>
+        <PlayPauseButton isPlaying={isPlaying} onPlayPause={onPlayPause} />
       </div>
 
       <div className="control-bar__group">
