@@ -1,13 +1,12 @@
 # Guitar Lab — Windows CI
 #
 # Builds the Tauri desktop release on GitHub-hosted Windows runners.
-# Triggers: push/PR to main, and manual workflow_dispatch.
+# Runs on PRs targeting main + manual dispatch; does not re-run on merge push
+# (use workflow_dispatch if you need a fresh main build).
 # Tests run before the release build; a failed test short-circuits the job.
 name: Windows CI
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
