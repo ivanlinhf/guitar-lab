@@ -8,14 +8,39 @@ afterEach(() => {
 })
 
 describe('listSongs', () => {
-  it('returns id and title for all built-in fixtures', () => {
+  it('returns id, title, bpm, and description for all built-in fixtures', () => {
     const list = listSongs()
     expect(list).toEqual([
-      { id: 'open-strings', title: 'Open Strings' },
-      { id: 'c-am-switch', title: 'C–Am Switch' },
-      { id: 'eight-bar-drill', title: 'Eight-Bar Drill' },
-      { id: 'twinkle-snippet', title: 'Twinkle Snippet' },
-      { id: 'g-c-d-switch', title: 'G–C–D Switch' },
+      {
+        id: 'open-strings',
+        title: 'Open Strings',
+        bpm: 80,
+        description: 'Basic open string practice',
+      },
+      {
+        id: 'c-am-switch',
+        title: 'C–Am Switch',
+        bpm: 70,
+        description: 'Short C major / A minor chord-switch placeholder',
+      },
+      {
+        id: 'eight-bar-drill',
+        title: 'Eight-Bar Drill',
+        bpm: 80,
+        description: 'Longer open-string drill for horizontal score scrolling',
+      },
+      {
+        id: 'twinkle-snippet',
+        title: 'Twinkle Snippet',
+        bpm: 90,
+        description: 'Short open-position melody on the top strings',
+      },
+      {
+        id: 'g-c-d-switch',
+        title: 'G–C–D Switch',
+        bpm: 72,
+        description: 'Four-bar G / C / D chord rhythm with simple switches',
+      },
     ])
     expect(list.length).toBeGreaterThanOrEqual(5)
     expect(list).toHaveLength(songFixtures.length)
@@ -56,13 +81,45 @@ describe('listSongs', () => {
     ])
 
     expect(list).toEqual([
-      { id: 'open-strings', title: 'Open Strings' },
-      { id: 'c-am-switch', title: 'C–Am Switch' },
+      {
+        id: 'open-strings',
+        title: 'Open Strings',
+        bpm: 80,
+        description: 'Basic open string practice',
+      },
+      {
+        id: 'c-am-switch',
+        title: 'C–Am Switch',
+        bpm: 70,
+      },
     ])
     expect(warn).toHaveBeenCalled()
     expect(warn.mock.calls.some((c) => String(c[0]).includes('Invalid SongDocument'))).toBe(
       true,
     )
+  })
+
+  it('omits description when the song JSON has none', () => {
+    const list = listSongs([
+      {
+        formatVersion: 1,
+        id: 'no-desc',
+        title: 'No Description',
+        tuning: ['E4', 'B3', 'G3', 'D3', 'A2', 'E2'],
+        bpm: 88,
+        timeSignature: { numerator: 4, denominator: 4 },
+        measures: [
+          {
+            index: 1,
+            events: [
+              { type: 'note', beat: 0, durationBeats: 1, string: 5, fret: 0 },
+            ],
+          },
+        ],
+      },
+    ])
+    expect(list).toEqual([{ id: 'no-desc', title: 'No Description', bpm: 88 }])
+    expect(list[0]).not.toHaveProperty('description')
   })
 })
 

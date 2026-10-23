@@ -2,7 +2,12 @@ import { songFixtures } from '../../songs/index.ts'
 import { parseSongDocument } from '../score/schema.ts'
 import type { SongDocument } from '../score/types.ts'
 
-export type SongListItem = { id: string; title: string }
+export type SongListItem = {
+  id: string
+  title: string
+  bpm: number
+  description?: string
+}
 
 /** Try to parse a raw fixture; on failure warn and return null. */
 function tryParseSong(entry: unknown): SongDocument | null {
@@ -13,6 +18,14 @@ function tryParseSong(entry: unknown): SongDocument | null {
     console.warn(`Skipping invalid song entry: ${message}`)
     return null
   }
+}
+
+function toListItem(doc: SongDocument): SongListItem {
+  const item: SongListItem = { id: doc.id, title: doc.title, bpm: doc.bpm }
+  if (doc.description !== undefined) {
+    item.description = doc.description
+  }
+  return item
 }
 
 /**
@@ -26,7 +39,7 @@ export function listSongs(
   for (const entry of entries) {
     const doc = tryParseSong(entry)
     if (doc) {
-      items.push({ id: doc.id, title: doc.title })
+      items.push(toListItem(doc))
     }
   }
   return items
