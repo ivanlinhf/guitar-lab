@@ -7,7 +7,7 @@ import {
 } from '../controls/index.ts'
 import { BigFretPanel } from './BigFretPanel.tsx'
 import './PracticeScreen.css'
-import { shouldHandleSpacePlayPause } from './shouldHandleSpacePlayPause.ts'
+import { handleSpacePlayPauseKeyDown } from './handleSpacePlayPauseKeyDown.ts'
 import { usePracticePlayer } from './usePracticePlayer.ts'
 
 export type PracticeScreenProps = {
@@ -51,17 +51,7 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.code !== 'Space' || event.repeat) {
-        return
-      }
-      if (event.ctrlKey || event.metaKey || event.altKey) {
-        return
-      }
-      if (!shouldHandleSpacePlayPause(event.target)) {
-        return
-      }
-      event.preventDefault()
-      togglePlayPause()
+      handleSpacePlayPauseKeyDown(event, togglePlayPause)
     }
 
     window.addEventListener('keydown', onKeyDown)

@@ -1,13 +1,16 @@
 import { describe, expect, it, vi } from 'vitest'
 import openStringsJson from '../../songs/open-strings.json'
 import { parseSongDocument } from '../score/schema.ts'
-import { beatToSeconds } from '../score/time.ts'
+import { beatToSeconds, beatsPerMeasure } from '../score/time.ts'
 import {
   createPlayer,
+  getPlayhead,
+  isCountingIn,
   isGuitarMuted,
   onMetronome,
   onSchedule,
   play,
+  setCountInEnabled,
   setGuitarMuted,
   setMetronomeEnabled,
   setPlayhead,
@@ -16,6 +19,7 @@ import {
 import type { ScheduledEvent } from './player.ts'
 
 const song = parseSongDocument(openStringsJson)
+const numerator = beatsPerMeasure(song)
 
 /** Seconds for `beats` at song BPM and tempo ratio 1. */
 function secondsForBeats(beats: number): number {
@@ -127,5 +131,58 @@ describe('player guitarMuted', () => {
     tick(player, secondsForBeats(0.01))
     // Seek reset the cursor; events at/after 1 may fire again — not a mute dump.
     expect(fired.filter((b) => b < 1)).toEqual([0])
+  })
+})
+
+describe('count-in × guitarMuted', () => {
+  it('during and after count-in while muted: clicks fire, onSchedule stays quiet', () => {
+    const player = createPlayer(song)
+    setCountInEnabled(player, true)
+    setGuitarMuted(player, true)
+    setMetronomeEnabled(player, true)
+    const schedule = vi.fn()
+    const clicks: number[] = []
+    onSchedule(player, schedule)
+    onMetronome(player, (b) => clicks.push(b))
+    play(player)
+
+    // Mid count-in: clicks only; playhead frozen; no guitar.
+    // Elapsed 1.5 → clicks at integer beats 0 and 1 (beat 2 not yet reached).
+    tick(player, secondsForBeats(1.5))
+    expect(isCountingIn(player)).toBe(true)
+    expect(getPlayhead(player)).toBe(0)
+    expect(clicks).toEqual([0, 1])
+    expect(schedule).not.toHaveBeenCalled()
+
+    // Finish count-in and advance into the song while still muted.
+    tick(player, secondsForBeats(numerator))
+    expect(isCountingIn(player)).toBe(false)
+    expect(getPlayhead(player)).toBeCloseTo(1.5, 10)
+    // Count-in 0..3, then song metronome 0,1.
+    expect(clicks).toEqual([0, 1, 2, 3, 0, 1])
+    expect(schedule).not.toHaveBeenCalled()
+  })
+
+  it('unmute after count-in: onSchedule fires only for subsequent events', () => {
+    const player = createPlayer(song)
+    setCountInEnabled(player, true)
+    setGuitarMuted(player, true)
+    const fired: number[] = []
+    onSchedule(player, (e) => {
+      fired.push(e.absoluteBeat)
+    })
+    play(player)
+
+    // Through count-in + 1.5 song beats while muted — schedule quiet.
+    tick(player, secondsForBeats(numerator + 1.5))
+    expect(isCountingIn(player)).toBe(false)
+    expect(getPlayhead(player)).toBeCloseTo(1.5, 10)
+    expect(fired).toEqual([])
+
+    setGuitarMuted(player, false)
+    tick(player, secondsForBeats(1.5))
+    // Events already crossed while muted must not dump; only later ones fire.
+    expect(fired.every((b) => b > 1.5)).toBe(true)
+    expect(fired).toEqual([2, 3])
   })
 })
