@@ -10,7 +10,13 @@ export default defineConfig({
       ignored: ['**/src-tauri/**'],
     },
   },
+  build: {
+    // Keep woff2 as separate files so unicode-range shards stay lazy-loaded.
+    assetsInlineLimit: (filePath) =>
+      filePath.endsWith('.woff2') ? false : undefined,
+  },
   test: {
     include: ['src/**/*.test.ts'],
   },
 })
+

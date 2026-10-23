@@ -1,5 +1,7 @@
 /* Mist Paper · Forest Ink — global tokens and page base. */
 
+@import './assets/fonts.css';
+
 :root {
   /* Color */
   --bg-page: #eef3f0;
