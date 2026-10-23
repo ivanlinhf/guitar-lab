@@ -1,6 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { getSongById } from '../../domain/library/index.ts'
-import { TabSvg } from '../../render/tabSvg/index.ts'
+import {
+  TabSvg,
+  measuresPerRowForWidth,
+  rowIndexFromPlayhead,
+  scrollTopForPlayheadRow,
+} from '../../render/tabSvg/index.ts'
 import {
   ControlBar,
   measureIndexFromPlayhead,
@@ -43,6 +48,8 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
 
   /** Default off: TAB-only until the learner turns「大品格」on. */
   const [bigFretEnabled, setBigFretEnabled] = useState(false)
+  const scoreScrollRef = useRef<HTMLDivElement | null>(null)
+  const [scoreContentWidth, setScoreContentWidth] = useState(0)
 
   // Space toggles play/pause on Practice; skip when focus is editable.
   useEffect(() => {
@@ -59,6 +66,62 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
       window.removeEventListener('keydown', onKeyDown)
     }
   }, [song, togglePlayPause])
+
+  // Measure score viewport content width for measures-per-row wrapping.
+  useEffect(() => {
+    const el = scoreScrollRef.current
+    if (!el) {
+      return
+    }
+
+    const updateWidth = () => {
+      const style = getComputedStyle(el)
+      const padX =
+        (Number.parseFloat(style.paddingLeft) || 0) +
+        (Number.parseFloat(style.paddingRight) || 0)
+      setScoreContentWidth(Math.max(0, el.clientWidth - padX))
+    }
+
+    updateWidth()
+    const observer = new ResizeObserver(updateWidth)
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+    }
+  }, [songId, bigFretEnabled])
+
+  const measuresPerRow = useMemo(() => {
+    if (!song || scoreContentWidth <= 0) {
+      return undefined
+    }
+    return measuresPerRowForWidth(
+      scoreContentWidth,
+      song.timeSignature.numerator,
+    )
+  }, [song, scoreContentWidth])
+
+  // Keep the playhead's wrapped row in view during playback (and seeks).
+  useEffect(() => {
+    const el = scoreScrollRef.current
+    if (!el || !song || measuresPerRow === undefined) {
+      return
+    }
+    const row = rowIndexFromPlayhead(
+      playheadBeat,
+      song.timeSignature.numerator,
+      song.measures.length,
+      measuresPerRow,
+    )
+    const style = getComputedStyle(el)
+    const padY =
+      (Number.parseFloat(style.paddingTop) || 0) +
+      (Number.parseFloat(style.paddingBottom) || 0)
+    const viewportHeight = Math.max(0, el.clientHeight - padY)
+    const nextTop = scrollTopForPlayheadRow(row, viewportHeight, el.scrollTop)
+    if (nextTop !== el.scrollTop) {
+      el.scrollTop = nextTop
+    }
+  }, [song, playheadBeat, measuresPerRow])
 
   const currentMeasure = song
     ? measureIndexFromPlayhead(song, playheadBeat)
@@ -91,10 +154,14 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
         {bigFretEnabled && song ? (
           <BigFretPanel song={song} playheadBeat={playheadBeat} />
         ) : null}
-        <div className="practice-screen__score-scroll">
+        <div className="practice-screen__score-scroll" ref={scoreScrollRef}>
           {song ? (
             <div className="practice-screen__score-inner">
-              <TabSvg song={song} playheadBeat={playheadBeat} />
+              <TabSvg
+                song={song}
+                playheadBeat={playheadBeat}
+                measuresPerRow={measuresPerRow}
+              />
             </div>
           ) : (
             <p className="practice-screen__missing">未找到该曲目</p>

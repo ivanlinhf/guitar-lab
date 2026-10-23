@@ -316,6 +316,8 @@ export function usePracticePlayer(
         return
       }
       play(current)
+      // play() may seek to 0 at EOF; keep React playhead in sync immediately.
+      setPlayheadBeat(getPlayhead(current))
       setIsPlaying(true)
       startClock()
     })()

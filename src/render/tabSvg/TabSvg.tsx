@@ -1,6 +1,9 @@
 import { notesAtPlayhead } from '../../domain/score/notesAtPlayhead.ts'
 import type { SongDocument } from '../../domain/score/types.ts'
-import { BEAT_WIDTH, PADDING_LEFT, layoutTab, stringY } from './layout.ts'
+import {
+  layoutTab,
+  playheadGeometry,
+} from './layout.ts'
 import { useFretSettle } from './useFretSettle.ts'
 import './TabSvg.css'
 
@@ -8,6 +11,11 @@ export type TabSvgProps = {
   song: SongDocument
   /** Absolute beat playhead; drives fret highlight and optional playhead line. */
   playheadBeat?: number
+  /**
+   * Max measures per wrapped row. When omitted, uses the full measure count
+   * (single horizontal strip).
+   */
+  measuresPerRow?: number
 }
 
 function noteKey(measureIndex: number, beat: number, string: number): string {
@@ -21,8 +29,8 @@ function highlightSignature(keys: Set<string> | null): string {
   return [...keys].sort().join('|')
 }
 
-export function TabSvg({ song, playheadBeat }: TabSvgProps) {
-  const layout = layoutTab(song)
+export function TabSvg({ song, playheadBeat, measuresPerRow }: TabSvgProps) {
+  const layout = layoutTab(song, { measuresPerRow })
 
   const highlightedKeys =
     playheadBeat === undefined
@@ -36,10 +44,15 @@ export function TabSvg({ song, playheadBeat }: TabSvgProps) {
   const keysSig = highlightSignature(highlightedKeys)
   const animateSettle = useFretSettle(playheadBeat, keysSig)
 
-  const playheadX =
+  const playhead =
     playheadBeat === undefined
       ? null
-      : PADDING_LEFT + playheadBeat * BEAT_WIDTH
+      : playheadGeometry(
+          playheadBeat,
+          layout.beatsPerMeasure,
+          layout.measureCount,
+          layout.measuresPerRow,
+        )
 
   const fretBgClass = animateSettle
     ? 'tab-svg__fret-bg'
@@ -59,7 +72,7 @@ export function TabSvg({ song, playheadBeat }: TabSvgProps) {
     >
       {layout.strings.map((line) => (
         <line
-          key={`s${line.string}`}
+          key={`s${line.row}-${line.string}`}
           className="tab-svg__string"
           x1={line.x1}
           y1={line.y}
@@ -122,14 +135,14 @@ export function TabSvg({ song, playheadBeat }: TabSvgProps) {
           </g>
         )
       })}
-      {playheadX !== null ? (
+      {playhead !== null ? (
         <line
           key={keysSig || 'playhead'}
           className={playheadClass}
-          x1={playheadX}
-          y1={stringY(1)}
-          x2={playheadX}
-          y2={stringY(6)}
+          x1={playhead.x}
+          y1={playhead.y1}
+          x2={playhead.x}
+          y2={playhead.y2}
         />
       ) : null}
     </svg>

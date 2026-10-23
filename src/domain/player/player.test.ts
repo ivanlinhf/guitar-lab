@@ -170,6 +170,30 @@ describe('play / pause', () => {
     pause(player)
     expect(player.isPlaying).toBe(false)
   })
+
+  it('seeks to 0 then advances from start when play is called at EOF', () => {
+    const player = createPlayer(song)
+    const end = songLengthBeats(song)
+    setPlayhead(player, end)
+    expect(getPlayhead(player)).toBe(end)
+
+    play(player)
+    expect(player.isPlaying).toBe(true)
+    expect(getPlayhead(player)).toBe(0)
+
+    // 80 BPM, ratio 1 → 0.75 s/beat; 0.75 s → 1 beat from start
+    tick(player, 0.75)
+    expect(getPlayhead(player)).toBeCloseTo(1)
+  })
+
+  it('does not rewind from EOF when A–B loop is enabled', () => {
+    const player = createPlayer(song)
+    const end = songLengthBeats(song)
+    setLoopEnabled(player, true)
+    setPlayhead(player, end)
+    play(player)
+    expect(getPlayhead(player)).toBe(end)
+  })
 })
 
 describe('tick', () => {
