@@ -52,8 +52,8 @@
 }
 
 .control-bar__item--active:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 .control-bar__item--primary {
@@ -146,9 +146,8 @@
 }
 
 .control-bar__toggle:focus-visible {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 .control-bar__toggle[aria-pressed='true'] {

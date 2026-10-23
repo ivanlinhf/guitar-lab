@@ -38,6 +38,10 @@
   /* Atmosphere */
   --shadow-score: 0 1px 2px rgb(26 36 32 / 0.04);
 
+  /* Keyboard focus — :focus-visible only; 2px accent + 2px offset */
+  --focus-ring: 2px solid var(--accent);
+  --focus-ring-offset: 2px;
+
   /* Motion — presence only; gated by prefers-reduced-motion below */
   --motion-enter-duration: 240ms;
   --motion-enter-ease: cubic-bezier(0.16, 1, 0.3, 1);

@@ -10,7 +10,7 @@
 
 .tab-svg__string {
   stroke: var(--ink-faint);
-  stroke-width: 0.9;
+  stroke-width: 1;
   fill: none;
 }
 
