@@ -11,7 +11,7 @@ export type ClickOnlyToggleProps = {
   onGuitarMutedChange?: (muted: boolean) => void
 }
 
-/** Bottom-bar「仅节拍」on/off control with 开/关 label. */
+/** Bottom-bar「仅节拍」on/off chip with status dot. */
 export function ClickOnlyToggle({
   guitarMuted,
   onGuitarMutedChange,
@@ -19,31 +19,15 @@ export function ClickOnlyToggle({
   const enabled = onGuitarMutedChange !== undefined
 
   return (
-    <div
-      className={
-        enabled
-          ? 'click-only-toggle'
-          : 'click-only-toggle click-only-toggle--disabled'
-      }
-      role="group"
+    <button
+      type="button"
+      className="control-bar__toggle click-only-toggle"
+      disabled={!enabled}
+      aria-pressed={enabled ? guitarMuted : undefined}
       aria-label={controlBarCopy.clickOnly}
+      onClick={() => onGuitarMutedChange?.(!guitarMuted)}
     >
-      <button
-        type="button"
-        className={
-          enabled
-            ? 'control-bar__item control-bar__item--active'
-            : 'control-bar__item'
-        }
-        disabled={!enabled}
-        aria-pressed={enabled ? guitarMuted : undefined}
-        onClick={() => onGuitarMutedChange?.(!guitarMuted)}
-      >
-        {controlBarCopy.clickOnly}
-      </button>
-      <span className="click-only-toggle__state" aria-live="polite">
-        {guitarMuted ? controlBarCopy.on : controlBarCopy.off}
-      </span>
-    </div>
+      {controlBarCopy.clickOnly}
+    </button>
   )
 }

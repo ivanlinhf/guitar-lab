@@ -13,6 +13,8 @@
   --accent: #2f6b4f;
   --accent-soft: #e4f0e9;
   --on-accent: #f7faf8;
+  --danger: #8a3a3a;
+  --danger-soft: #f3e6e6;
 
   /* Type */
   --font-display: 'Fraunces', 'Noto Serif SC', 'Songti SC', serif;

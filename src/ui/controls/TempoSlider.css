@@ -2,9 +2,8 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
   flex: 0 0 auto;
-  padding: 2px var(--space-1);
   font: inherit;
   font-size: 0.8125rem;
   color: var(--ink);
@@ -12,13 +11,13 @@
 
 .tempo-slider--disabled {
   color: var(--ink-faint);
-  opacity: 0.85;
 }
 
 .tempo-slider__label {
   flex: 0 0 auto;
   margin: 0;
   white-space: nowrap;
+  color: var(--ink-muted);
 }
 
 .tempo-slider__range {
@@ -37,6 +36,12 @@
   flex: 0 0 auto;
   min-width: 2.75em;
   font-variant-numeric: tabular-nums;
+  font-weight: 600;
   white-space: nowrap;
-  color: var(--ink-muted);
+  color: var(--ink);
+}
+
+.tempo-slider--disabled .tempo-slider__value {
+  color: var(--ink-faint);
+  font-weight: 500;
 }

@@ -8,7 +8,7 @@ export type BigFretToggleProps = {
   onBigFretEnabledChange?: (enabled: boolean) => void
 }
 
-/** Bottom-bar「大品格」on/off control with 开/关 label. Default off. */
+/** Bottom-bar「大品格」on/off chip with status dot. Default off. */
 export function BigFretToggle({
   bigFretEnabled,
   onBigFretEnabledChange,
@@ -16,31 +16,15 @@ export function BigFretToggle({
   const enabled = onBigFretEnabledChange !== undefined
 
   return (
-    <div
-      className={
-        enabled
-          ? 'big-fret-toggle'
-          : 'big-fret-toggle big-fret-toggle--disabled'
-      }
-      role="group"
+    <button
+      type="button"
+      className="control-bar__toggle big-fret-toggle"
+      disabled={!enabled}
+      aria-pressed={enabled ? bigFretEnabled : undefined}
       aria-label={controlBarCopy.bigFret}
+      onClick={() => onBigFretEnabledChange?.(!bigFretEnabled)}
     >
-      <button
-        type="button"
-        className={
-          enabled
-            ? 'control-bar__item control-bar__item--active'
-            : 'control-bar__item'
-        }
-        disabled={!enabled}
-        aria-pressed={enabled ? bigFretEnabled : undefined}
-        onClick={() => onBigFretEnabledChange?.(!bigFretEnabled)}
-      >
-        {controlBarCopy.bigFret}
-      </button>
-      <span className="big-fret-toggle__state" aria-live="polite">
-        {bigFretEnabled ? controlBarCopy.on : controlBarCopy.off}
-      </span>
-    </div>
+      {controlBarCopy.bigFret}
+    </button>
   )
 }

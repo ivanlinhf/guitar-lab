@@ -2,21 +2,35 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--space-2);
+  gap: 0;
   width: 100%;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-2);
   border-top: 1px solid var(--line);
   background: var(--bg-elevated);
   color: var(--ink);
 }
 
+.control-bar__group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+  padding: 0 var(--space-3);
+  min-height: 32px;
+}
+
+.control-bar__group + .control-bar__group {
+  border-left: 1px solid var(--line);
+}
+
 .control-bar__item {
   flex: 0 0 auto;
   margin: 0;
-  padding: var(--space-1) 10px;
+  padding: var(--space-1) var(--space-3);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  background: var(--bg-page-2);
+  background: var(--bg-page);
   font: inherit;
   font-size: 0.8125rem;
   font-weight: 500;
@@ -56,5 +70,61 @@
 }
 
 .control-bar__item:disabled {
+  opacity: 1;
+  color: var(--ink-faint);
+  background: var(--bg-page-2);
+  border-color: var(--line);
+  cursor: not-allowed;
+}
+
+/* Toggle chip with status dot (节拍器 / 预备拍 / 仅节拍 / 大品格 / A–B 循环). */
+.control-bar__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.control-bar__toggle::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+  flex: 0 0 auto;
+}
+
+.control-bar__toggle:hover:not(:disabled) {
+  background: var(--bg-page-2);
+  color: var(--ink);
+}
+
+.control-bar__toggle:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.control-bar__toggle[aria-pressed='true'] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.control-bar__toggle[aria-pressed='true']::before {
+  background: var(--accent);
+}
+
+.control-bar__toggle:disabled {
+  color: var(--ink-faint);
+  cursor: not-allowed;
   opacity: 0.85;
 }

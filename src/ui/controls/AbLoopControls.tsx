@@ -28,41 +28,50 @@ export function AbLoopControls({
   onLoopEnabledChange,
   feedback = null,
 }: AbLoopControlsProps) {
-  const enabled = onSetLoopA !== undefined && onSetLoopB !== undefined &&
+  const wired =
+    onSetLoopA !== undefined &&
+    onSetLoopB !== undefined &&
     onLoopEnabledChange !== undefined
-  const itemClass = enabled
-    ? 'control-bar__item control-bar__item--active'
-    : 'control-bar__item'
+  /** 「设为 A/B」only when the loop is on (and handlers are wired). */
+  const canSetMarks = wired && loopEnabled
 
   return (
     <div
       className={
-        enabled ? 'ab-loop-controls' : 'ab-loop-controls ab-loop-controls--disabled'
+        wired ? 'ab-loop-controls' : 'ab-loop-controls ab-loop-controls--disabled'
       }
       role="group"
       aria-label={controlBarCopy.abLoop}
     >
       <button
         type="button"
-        className={itemClass}
-        disabled={!enabled}
-        aria-pressed={enabled ? loopEnabled : undefined}
+        className="control-bar__toggle"
+        disabled={!wired}
+        aria-pressed={wired ? loopEnabled : undefined}
         onClick={() => onLoopEnabledChange?.(!loopEnabled)}
       >
         {controlBarCopy.abLoop}
       </button>
       <button
         type="button"
-        className={itemClass}
-        disabled={!enabled}
+        className={
+          canSetMarks
+            ? 'control-bar__item control-bar__item--active'
+            : 'control-bar__item'
+        }
+        disabled={!canSetMarks}
         onClick={onSetLoopA}
       >
         {controlBarCopy.setA}
       </button>
       <button
         type="button"
-        className={itemClass}
-        disabled={!enabled}
+        className={
+          canSetMarks
+            ? 'control-bar__item control-bar__item--active'
+            : 'control-bar__item'
+        }
+        disabled={!canSetMarks}
         onClick={onSetLoopB}
       >
         {controlBarCopy.setB}

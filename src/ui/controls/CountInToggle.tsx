@@ -8,7 +8,7 @@ export type CountInToggleProps = {
   onCountInEnabledChange?: (enabled: boolean) => void
 }
 
-/** Bottom-bar「预备拍」on/off control with 开/关 label. */
+/** Bottom-bar「预备拍」on/off chip with status dot. */
 export function CountInToggle({
   countInEnabled,
   onCountInEnabledChange,
@@ -16,31 +16,15 @@ export function CountInToggle({
   const enabled = onCountInEnabledChange !== undefined
 
   return (
-    <div
-      className={
-        enabled
-          ? 'count-in-toggle'
-          : 'count-in-toggle count-in-toggle--disabled'
-      }
-      role="group"
+    <button
+      type="button"
+      className="control-bar__toggle count-in-toggle"
+      disabled={!enabled}
+      aria-pressed={enabled ? countInEnabled : undefined}
       aria-label={controlBarCopy.countIn}
+      onClick={() => onCountInEnabledChange?.(!countInEnabled)}
     >
-      <button
-        type="button"
-        className={
-          enabled
-            ? 'control-bar__item control-bar__item--active'
-            : 'control-bar__item'
-        }
-        disabled={!enabled}
-        aria-pressed={enabled ? countInEnabled : undefined}
-        onClick={() => onCountInEnabledChange?.(!countInEnabled)}
-      >
-        {controlBarCopy.countIn}
-      </button>
-      <span className="count-in-toggle__state" aria-live="polite">
-        {countInEnabled ? controlBarCopy.on : controlBarCopy.off}
-      </span>
-    </div>
+      {controlBarCopy.countIn}
+    </button>
   )
 }
