@@ -7,7 +7,16 @@ import {
   CHORD_LABEL_Y,
   PADDING_LEFT,
   PADDING_RIGHT,
+  ROW_GAP,
+  STAFF_HEIGHT,
   layoutTab,
+  measureWidthPx,
+  measuresPerRowForWidth,
+  playheadGeometry,
+  rowIndexForMeasure,
+  rowIndexFromPlayhead,
+  rowTopY,
+  scrollTopForPlayheadRow,
   stringY,
 } from './layout.ts'
 
@@ -19,6 +28,8 @@ describe('layoutTab', () => {
 
     expect(layout.measureCount).toBe(2)
     expect(layout.beatsPerMeasure).toBe(4)
+    expect(layout.measuresPerRow).toBe(2)
+    expect(layout.rowCount).toBe(1)
     expect(layout.strings).toHaveLength(6)
     expect(layout.strings[0]!.string).toBe(1)
     expect(layout.strings[0]!.y).toBe(stringY(1))
@@ -136,13 +147,15 @@ describe('layoutTab', () => {
     expect(camLayout.chords[0]!.y).toBeLessThan(stringY(1))
   })
 
-  it('lays out eight-bar-drill wider than a typical viewport', () => {
+  it('lays out eight-bar-drill as a single strip when unconstrained', () => {
     const song = getSongById('eight-bar-drill')
     expect(song).not.toBeNull()
     const layout = layoutTab(song!)
 
     expect(layout.measureCount).toBe(8)
     expect(layout.beatsPerMeasure).toBe(4)
+    expect(layout.measuresPerRow).toBe(8)
+    expect(layout.rowCount).toBe(1)
     expect(layout.width).toBe(
       PADDING_LEFT + 8 * 4 * BEAT_WIDTH + PADDING_RIGHT,
     )
@@ -151,6 +164,32 @@ describe('layoutTab', () => {
     expect(layout.strings).toHaveLength(6)
     expect(layout.chords).toHaveLength(8)
     expect(layout.notes.length).toBeGreaterThan(20)
+  })
+
+  it('wraps eight-bar-drill into rows when measuresPerRow is limited', () => {
+    const song = getSongById('eight-bar-drill')!
+    const layout = layoutTab(song, { measuresPerRow: 4 })
+
+    expect(layout.measuresPerRow).toBe(4)
+    expect(layout.rowCount).toBe(2)
+    expect(layout.width).toBe(
+      PADDING_LEFT + 4 * 4 * BEAT_WIDTH + PADDING_RIGHT,
+    )
+    expect(layout.height).toBe(2 * STAFF_HEIGHT + ROW_GAP)
+    // 4 openings + 1 close per row × 2 rows
+    expect(layout.bars).toHaveLength(10)
+    expect(layout.strings).toHaveLength(12)
+
+    const m5 = layout.notes.find(
+      (n) => n.measureIndex === 5 && n.beat === 0,
+    )
+    expect(m5).toBeDefined()
+    expect(m5!.x).toBe(PADDING_LEFT)
+    expect(m5!.y).toBeGreaterThan(stringY(m5!.string, 0))
+    expect(m5!.y).toBe(stringY(m5!.string, 1))
+
+    const chord5 = layout.chords.find((c) => c.measureIndex === 5)!
+    expect(chord5.y).toBe(rowTopY(1) + CHORD_LABEL_Y)
   })
 
   it('omits chord labels when measures have no chord', () => {
@@ -190,5 +229,68 @@ describe('layoutTab', () => {
     const layout = layoutTab(song)
     expect(layout.measureCount).toBe(2)
     expect(layout.chords).toEqual([])
+  })
+})
+
+describe('measuresPerRowForWidth', () => {
+  it('fits as many full measures as the viewport allows', () => {
+    const beats = 4
+    const one = measureWidthPx(beats)
+    // Exactly 3 measures of content + padding
+    const width = PADDING_LEFT + 3 * one + PADDING_RIGHT
+    expect(measuresPerRowForWidth(width, beats)).toBe(3)
+  })
+
+  it('returns at least 1 when the viewport is narrower than one measure', () => {
+    expect(measuresPerRowForWidth(10, 4)).toBe(1)
+  })
+
+  it('ignores a partial trailing measure that does not fit', () => {
+    const beats = 4
+    const one = measureWidthPx(beats)
+    const width = PADDING_LEFT + 2 * one + one / 2 + PADDING_RIGHT
+    expect(measuresPerRowForWidth(width, beats)).toBe(2)
+  })
+})
+
+describe('rowIndexFromPlayhead', () => {
+  it('maps playhead beats to wrapped rows', () => {
+    // 4 beats/measure, 4 measures/row → measure 0–3 row 0, 4–7 row 1
+    expect(rowIndexFromPlayhead(0, 4, 8, 4)).toBe(0)
+    expect(rowIndexFromPlayhead(15.9, 4, 8, 4)).toBe(0)
+    expect(rowIndexFromPlayhead(16, 4, 8, 4)).toBe(1)
+    expect(rowIndexFromPlayhead(31, 4, 8, 4)).toBe(1)
+  })
+
+  it('clamps song-end playhead to the last measure row', () => {
+    expect(rowIndexFromPlayhead(32, 4, 8, 4)).toBe(1)
+    expect(rowIndexForMeasure(7, 4)).toBe(1)
+  })
+})
+
+describe('scrollTopForPlayheadRow', () => {
+  it('scrolls down when the row bottom is below the viewport', () => {
+    const viewport = STAFF_HEIGHT
+    expect(scrollTopForPlayheadRow(1, viewport, 0)).toBe(
+      rowTopY(1) + STAFF_HEIGHT - viewport,
+    )
+  })
+
+  it('scrolls up when the row top is above the viewport', () => {
+    expect(scrollTopForPlayheadRow(0, STAFF_HEIGHT, 200)).toBe(0)
+  })
+
+  it('leaves scrollTop unchanged when the row is already visible', () => {
+    expect(scrollTopForPlayheadRow(0, 400, 0)).toBe(0)
+  })
+})
+
+describe('playheadGeometry', () => {
+  it('places the playhead on the wrapped row and column', () => {
+    const g = playheadGeometry(16.5, 4, 8, 4)
+    expect(g.row).toBe(1)
+    expect(g.x).toBe(PADDING_LEFT + 0.5 * BEAT_WIDTH)
+    expect(g.y1).toBe(stringY(1, 1))
+    expect(g.y2).toBe(stringY(6, 1))
   })
 })

@@ -127,7 +127,7 @@ export function ControlBar({
         />
       </div>
 
-      <div className="control-bar__group">
+      <div className="control-bar__group control-bar__group--measure">
         {showMeasureProgress ? (
           <MeasureProgress
             currentMeasure={currentMeasure}

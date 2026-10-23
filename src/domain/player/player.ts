@@ -305,6 +305,12 @@ export function setLoopB(player: Player, measureIndex: number): Player {
  * Calling while already playing is a no-op for count-in (does not restart it).
  */
 export function play(player: Player): Player {
+  // At EOF without A–B loop, restart from 0 so play/Space can replay.
+  // Loop wrap is handled in tick when crossing loopB — leave playhead alone.
+  const end = songLengthBeats(player.song)
+  if (!player.loopEnabled && player.playheadBeat >= end) {
+    setPlayhead(player, 0)
+  }
   if (!player.isPlaying && player.countInEnabled) {
     player.countInRemainingBeats = beatsPerMeasure(player.song)
     player.countInNextClickBeat = 0

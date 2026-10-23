@@ -1,13 +1,18 @@
 .control-bar {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0;
+  box-sizing: border-box;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   padding: var(--space-2) var(--space-2);
   border-top: 1px solid var(--line);
   background: var(--bg-elevated);
   color: var(--ink);
+  overflow-x: auto;
 }
 
 .control-bar__group {
@@ -18,6 +23,15 @@
   flex: 0 0 auto;
   padding: 0 var(--space-3);
   min-height: 32px;
+}
+
+/* Keep「小节」+ scrub intact: never shrink; wrap to next line if needed. */
+.control-bar__group--measure {
+  flex: 0 0 auto;
+  margin-left: auto;
+  justify-content: flex-end;
+  min-width: max-content;
+  padding-right: var(--space-4);
 }
 
 .control-bar__group + .control-bar__group {
