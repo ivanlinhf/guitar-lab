@@ -1,32 +1,3 @@
 .count-in-toggle {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
   flex: 0 0 auto;
-  font: inherit;
-  font-size: 0.8125rem;
-  color: var(--ink);
-}
-
-.count-in-toggle--disabled {
-  color: var(--ink-faint);
-  opacity: 0.85;
-}
-
-.count-in-toggle__state {
-  flex: 0 0 auto;
-  min-width: 1.5em;
-  white-space: nowrap;
-  color: var(--ink-muted);
-}
-
-.count-in-toggle--disabled .count-in-toggle__state {
-  color: var(--ink-faint);
-}
-
-.count-in-toggle button[aria-pressed='true'] {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent);
 }

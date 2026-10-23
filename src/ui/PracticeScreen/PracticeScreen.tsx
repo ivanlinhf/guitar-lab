@@ -18,7 +18,7 @@ export type PracticeScreenProps = {
 export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
   const song = useMemo(() => getSongById(songId), [songId])
   const title = song?.title ?? songId
-  const bpmLabel = song ? `BPM ${song.bpm}` : null
+  const bpm = song?.bpm
   const {
     isPlaying,
     playheadBeat,
@@ -83,11 +83,17 @@ export function PracticeScreen({ songId, onBack }: PracticeScreenProps) {
           className="practice-screen__back"
           onClick={onBack}
         >
+          <span className="practice-screen__back-chevron" aria-hidden="true">
+            ‹
+          </span>
           返回
         </button>
         <h1 className="practice-screen__title">{title}</h1>
-        {bpmLabel ? (
-          <span className="practice-screen__bpm">{bpmLabel}</span>
+        {bpm !== undefined ? (
+          <span className="practice-screen__bpm">
+            <span className="practice-screen__bpm-label">BPM</span>{' '}
+            <span className="practice-screen__bpm-value">{bpm}</span>
+          </span>
         ) : null}
       </header>
 

@@ -53,7 +53,7 @@ export type ControlBarProps = {
 
 /**
  * Fixed practice bottom bar, L→R:
- * 播放/暂停 → 速度 → A–B → 节拍器 → 预备拍 → 仅节拍 → 大品格 → 小节/scrub.
+ * 播放/暂停 → 速度 → A–B → 节拍器/预备拍/仅节拍/大品格 → 小节/scrub.
  */
 export function ControlBar({
   isPlaying = false,
@@ -85,59 +85,73 @@ export function ControlBar({
 
   return (
     <div className="control-bar" role="toolbar" aria-label={controlBarCopy.toolbarLabel}>
-      <button
-        type="button"
-        className={
-          playEnabled
-            ? 'control-bar__item control-bar__item--active control-bar__item--primary'
-            : 'control-bar__item'
-        }
-        disabled={!playEnabled}
-        onClick={onPlayPause}
-        aria-pressed={playEnabled ? isPlaying : undefined}
-      >
-        {isPlaying ? controlBarCopy.pause : controlBarCopy.play}
-      </button>
-      <TempoSlider
-        tempoRatio={tempoRatio}
-        onTempoRatioChange={onTempoRatioChange}
-      />
-      <AbLoopControls
-        loopA={loopA}
-        loopB={loopB}
-        loopEnabled={loopEnabled}
-        onSetLoopA={onSetLoopA}
-        onSetLoopB={onSetLoopB}
-        onLoopEnabledChange={onLoopEnabledChange}
-        feedback={loopFeedback}
-      />
-      <MetronomeToggle
-        metronomeEnabled={metronomeEnabled}
-        onMetronomeEnabledChange={onMetronomeEnabledChange}
-      />
-      <CountInToggle
-        countInEnabled={countInEnabled}
-        onCountInEnabledChange={onCountInEnabledChange}
-      />
-      <ClickOnlyToggle
-        guitarMuted={guitarMuted}
-        onGuitarMutedChange={onGuitarMutedChange}
-      />
-      <BigFretToggle
-        bigFretEnabled={bigFretEnabled}
-        onBigFretEnabledChange={onBigFretEnabledChange}
-      />
-      {showMeasureProgress ? (
-        <MeasureProgress
-          currentMeasure={currentMeasure}
-          totalMeasures={measureTotal}
-          onSeekToMeasure={onSeekToMeasure}
-        />
-      ) : (
-        <button type="button" className="control-bar__item" disabled>
-          {controlBarCopy.measure}
+      <div className="control-bar__group">
+        <button
+          type="button"
+          className={
+            playEnabled
+              ? 'control-bar__item control-bar__item--active control-bar__item--primary'
+              : 'control-bar__item'
+          }
+          disabled={!playEnabled}
+          onClick={onPlayPause}
+          aria-pressed={playEnabled ? isPlaying : undefined}
+        >
+          {isPlaying ? controlBarCopy.pause : controlBarCopy.play}
         </button>
-      )}
+      </div>
+
+      <div className="control-bar__group">
+        <TempoSlider
+          tempoRatio={tempoRatio}
+          onTempoRatioChange={onTempoRatioChange}
+        />
+      </div>
+
+      <div className="control-bar__group">
+        <AbLoopControls
+          loopA={loopA}
+          loopB={loopB}
+          loopEnabled={loopEnabled}
+          onSetLoopA={onSetLoopA}
+          onSetLoopB={onSetLoopB}
+          onLoopEnabledChange={onLoopEnabledChange}
+          feedback={loopFeedback}
+        />
+      </div>
+
+      <div className="control-bar__group">
+        <MetronomeToggle
+          metronomeEnabled={metronomeEnabled}
+          onMetronomeEnabledChange={onMetronomeEnabledChange}
+        />
+        <CountInToggle
+          countInEnabled={countInEnabled}
+          onCountInEnabledChange={onCountInEnabledChange}
+        />
+        <ClickOnlyToggle
+          guitarMuted={guitarMuted}
+          onGuitarMutedChange={onGuitarMutedChange}
+        />
+        <BigFretToggle
+          bigFretEnabled={bigFretEnabled}
+          onBigFretEnabledChange={onBigFretEnabledChange}
+        />
+      </div>
+
+      <div className="control-bar__group">
+        {showMeasureProgress ? (
+          <MeasureProgress
+            currentMeasure={currentMeasure}
+            totalMeasures={measureTotal}
+            onSeekToMeasure={onSeekToMeasure}
+          />
+        ) : (
+          <button type="button" className="control-bar__item" disabled>
+            {controlBarCopy.measure}
+          </button>
+        )}
+      </div>
     </div>
   )
 }
