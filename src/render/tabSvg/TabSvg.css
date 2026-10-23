@@ -9,54 +9,55 @@
 }
 
 .tab-svg__string {
-  stroke: var(--ink-muted);
-  stroke-width: 1;
+  stroke: var(--ink-faint);
+  stroke-width: 0.9;
   fill: none;
 }
 
 .tab-svg__bar {
   stroke: var(--ink);
-  stroke-width: 1.5;
+  stroke-width: 1.25;
+  stroke-opacity: 0.88;
   fill: none;
 }
 
 .tab-svg__bar--close {
-  stroke-width: 2;
+  stroke-width: 1.85;
 }
 
 .tab-svg__chord {
   fill: var(--ink);
   font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 650;
 }
 
 .tab-svg__fret {
   fill: var(--ink);
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   /* Punch a small gap in the string behind the digit. */
   paint-order: stroke fill;
   stroke: var(--bg-score);
-  stroke-width: 4px;
+  stroke-width: 5px;
 }
 
 .tab-svg__fret-bg {
   fill: var(--accent);
-  opacity: 0.9;
+  opacity: 1;
 }
 
 .tab-svg__fret--active {
   fill: var(--on-accent);
   stroke: var(--accent);
-  stroke-width: 3px;
+  stroke-width: 0;
 }
 
 .tab-svg__playhead {
   stroke: var(--accent);
   stroke-width: 1.5;
-  stroke-opacity: 0.55;
+  stroke-opacity: 0.5;
   fill: none;
   pointer-events: none;
 }

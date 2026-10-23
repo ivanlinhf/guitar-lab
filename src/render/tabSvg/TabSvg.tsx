@@ -85,7 +85,7 @@ export function TabSvg({ song, playheadBeat }: TabSvgProps) {
                 y={note.y - 10}
                 width={18}
                 height={20}
-                rx={3}
+                rx={4}
               />
             ) : null}
             <text

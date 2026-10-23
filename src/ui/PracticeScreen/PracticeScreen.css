@@ -121,12 +121,16 @@
   box-shadow: var(--shadow-score);
 }
 
-/* Keep TabSvg at its layout pixel width so long scores scroll, not shrink. */
+/* Keep TabSvg at its layout pixel width so long scores scroll, not shrink.
+   Short staves sit lightly centered in the score paper; tall ones scroll. */
 .practice-screen__score-inner {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
   width: max-content;
   min-width: 100%;
-  vertical-align: top;
+  min-height: 100%;
 }
 
 .practice-screen__missing {
