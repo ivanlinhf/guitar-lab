@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Single job: Vitest → Tauri release build → upload installers.
+  # Single job: Vitest → Tauri release build → upload MSI + portable exe.
   # Sequential steps so a test failure never produces a green release artifact.
   windows:
     runs-on: windows-latest
@@ -48,13 +48,23 @@ jobs:
       - name: Build Tauri release
         run: npm run tauri build
 
-      # With bundle.targets "all", Windows produces MSI + NSIS installers.
-      - name: Upload Windows installers
+      # MSI installer (WiX). productName "Guitar Lab" names the .msi.
+      # Not uploaded: bundle/nsis/*.exe (NSIS setup installer).
+      - name: Upload MSI installer
         uses: actions/upload-artifact@v4
         with:
-          name: guitar-lab-windows
-          path: |
-            src-tauri/target/release/bundle/msi/*.msi
-            src-tauri/target/release/bundle/nsis/*.exe
+          name: guitar-lab-windows-msi
+          path: src-tauri/target/release/bundle/msi/*.msi
+          if-no-files-found: error
+          retention-days: 14
+
+      # Portable exe — run without install. Filename is Cargo package binary
+      # name "app" (src-tauri/Cargo.toml); Tauri 2 does not rename to productName
+      # unless mainBinaryName is set.
+      - name: Upload portable exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: guitar-lab-windows-portable
+          path: src-tauri/target/release/app.exe
           if-no-files-found: error
           retention-days: 14
