@@ -48,7 +48,8 @@ jobs:
       - name: Build Tauri release
         run: npm run tauri build
 
-      # MSI installer (WiX). productName "Guitar Lab" names the .msi.
+      # MSI installer (WiX). productName "Guitar Lab" names the .msi / Start Menu;
+      # the installed binary is mainBinaryName "GuitarLab" → GuitarLab.exe.
       # Not uploaded: bundle/nsis/*.exe (NSIS setup installer).
       - name: Upload MSI installer
         uses: actions/upload-artifact@v4
@@ -58,13 +59,12 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      # Portable exe — run without install. Filename is Cargo package binary
-      # name "app" (src-tauri/Cargo.toml); Tauri 2 does not rename to productName
-      # unless mainBinaryName is set.
+      # Portable exe — run without install. Emitted by tauri build after renaming
+      # the Cargo binary via top-level mainBinaryName "GuitarLab".
       - name: Upload portable exe
         uses: actions/upload-artifact@v4
         with:
           name: guitar-lab-windows-portable
-          path: src-tauri/target/release/app.exe
+          path: src-tauri/target/release/GuitarLab.exe
           if-no-files-found: error
           retention-days: 14
